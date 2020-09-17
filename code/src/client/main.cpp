@@ -6,7 +6,6 @@
 */
 
 #include <iostream>
-#include "ArgParser.hpp"
 #include "Core.hpp"
 #include "Error.hpp"
 
@@ -24,9 +23,9 @@ int usage(int returnValue)
     return returnValue;
 }
 
-int setup(const std::pair<std::string, int> &args)
+int setup(ArgParser *parser)
 {
-    Core *core = new Core(args.first, args.second);
+    Core *core = new Core(parser);
 
     try {
         core->initialize();
@@ -46,6 +45,6 @@ int main(int ac, char **av)
         return usage(0);
     else if (!parser->isValid())
         return error("Error: Invalid Arguments.");
-    return setup(parser->getParsedArgs());
+    return setup(parser);
 }
 

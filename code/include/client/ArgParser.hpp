@@ -21,6 +21,8 @@ class ArgParser
 
 		bool isValid() const;
 		bool isUsage() const;
+		char **getAV() const;
+		int getAC() const;
 		std::pair<std::string, int> getParsedArgs() const;
 };
 

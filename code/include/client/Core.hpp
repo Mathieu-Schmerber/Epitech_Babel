@@ -10,6 +10,7 @@
 
 #include "Database.hpp"
 #include "Graphical.hpp"
+#include "ArgParser.hpp"
 
 class Core
 {
@@ -18,7 +19,7 @@ class Core
         Database *_database;
 
 	public:
-		Core(const std::string &serverIp, const int &serverPort);
+		Core(ArgParser *parser);
 		~Core();
 
 		void initialize();

@@ -34,3 +34,13 @@ std::pair<std::string, int> ArgParser::getParsedArgs() const
 {
     return {std::string(this->_av[1]), std::stoi(this->_av[2])};
 }
+
+int ArgParser::getAC() const
+{
+    return this->_ac;
+}
+
+char ** ArgParser::getAV() const
+{
+    return this->_av;
+}

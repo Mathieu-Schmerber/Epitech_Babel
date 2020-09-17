@@ -14,12 +14,12 @@ Database::Database(const std::string &ip, const int &port)
 void Database::connect()
 {
     printf("connecting to %s:%d...\n", this->_ip.c_str(), this->_port);
-    throw ServerError("Connection failed.");
+    // throw ServerError("Connection failed.");
     // Setup TCP connection between client and server
 }
 
 std::vector<Contact *> Database::getContactList()
 {
     // Call server and receive list
-    return {};
+    return {new Contact("127.0.0.1", "Mathieu")};
 }

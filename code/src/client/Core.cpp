@@ -7,10 +7,14 @@
 
 #include "Core.hpp"
 
-Core::Core(const std::string &serverIp, const int &serverPort)
+Core::Core(ArgParser *parser)
 {
-    this->_interface = new Graphical({150, 150}, "Babel");
-    this->_database = new Database(serverIp, serverPort);
+    std::pair<std::string, int> serverArgs = parser->getParsedArgs();
+
+    this->_database = new Database(serverArgs.first, serverArgs.second);
+    this->_interface = new Graphical({150, 150}, "Babel",
+                                     parser->getAC(), parser->getAV());
+    delete parser;
 }
 
 Core::~Core()
@@ -21,5 +25,11 @@ Core::~Core()
 
 void Core::initialize()
 {
+    std::vector<Contact *> contactList;
+
     this->_database->connect();
+    contactList = this->_database->getContactList();
+    for (auto &contact : contactList)
+        this->_interface->addButton(contact);
+    this->_interface->display();
 }

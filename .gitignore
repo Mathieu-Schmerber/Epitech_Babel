@@ -1,4 +1,6 @@
 *~
+babel_client
+bable_server
 cmake-build-debug
 .idea
 code/CMakeList.txt

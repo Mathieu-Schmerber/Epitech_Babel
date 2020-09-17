@@ -11,9 +11,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <iostream>
-#include "Audio.hpp"
 #include "portaudio.h"
 
+#define NUM_SECONDS   (100)
 #define SAMPLE_RATE         (44100)
 #define PA_SAMPLE_TYPE      paFloat32
 #define FRAMES_PER_BUFFER   paFramesPerBufferUnspecified
@@ -28,11 +28,15 @@ class Audio
         PaStream *stream;
         PaError error;
 
+        int FuzzCallbackMethod(const void *inputBuffer, void *outputBuffer,
+                            unsigned long framesPerBuffer,
+                            const PaStreamCallbackTimeInfo* timeInfo,
+                            PaStreamCallbackFlags statusFlags);
         static int FuzzCallback(const void *inputBuffer, void *outputBuffer,
-                         unsigned long framesPerBuffer,
-                         const PaStreamCallbackTimeInfo* timeInfo,
-                         PaStreamCallbackFlags statusFlags,
-                         void *userData);
+                            unsigned long framesPerBuffer,
+                            const PaStreamCallbackTimeInfo* timeInfo,
+                            PaStreamCallbackFlags statusFlags,
+                            void *userData);
         bool Error();
 
     public:

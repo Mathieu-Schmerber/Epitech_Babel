@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
 #include "Audio.hpp"
 #include "portaudio.h"
 
@@ -51,15 +50,15 @@ bool Audio::InitOutput()
     return true;
 }
 
-int Audio::FuzzCallback(const void *inputBuffer, void *outputBuffer,
+int Audio::FuzzCallbackMethod(const void *inputBuffer, void *outputBuffer,
     unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo *timeInfo,
-    PaStreamCallbackFlags statusFlags, void *userData)
+    PaStreamCallbackFlags statusFlags
+)
 {
     auto out = (SAMPLE*)outputBuffer;
     auto in = (const SAMPLE*)inputBuffer;
     (void) timeInfo;
     (void) statusFlags;
-    (void) userData;
 
     if (inputBuffer == nullptr) {
         for(unsigned int i = 0; i < framesPerBuffer; i++) {
@@ -76,6 +75,16 @@ int Audio::FuzzCallback(const void *inputBuffer, void *outputBuffer,
     return paContinue;
 }
 
+int Audio::FuzzCallback(const void *inputBuffer, void *outputBuffer,
+    unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo *timeInfo,
+    PaStreamCallbackFlags statusFlags, void *userData)
+{
+    return ((Audio*)userData)->FuzzCallbackMethod(inputBuffer, outputBuffer,
+                framesPerBuffer,
+                timeInfo,
+                statusFlags);
+}
+
 bool Audio::OpenStream()
 {
     error = Pa_OpenStream(
@@ -84,7 +93,7 @@ bool Audio::OpenStream()
           &outputParameters,
           SAMPLE_RATE,
           FRAMES_PER_BUFFER,
-          0,
+          0, /* paClipOff, */  /* we won't output out of range samples so don't bother clipping them */
           FuzzCallback,
         (void*)this);
     if (error != paNoError)

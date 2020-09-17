@@ -4,16 +4,9 @@
 
 #define SAMPLE_RATE         (44100)
 #define PA_SAMPLE_TYPE      paFloat32
-#define FRAMES_PER_BUFFER   (64)
+#define FRAMES_PER_BUFFER   paFramesPerBufferUnspecified
 
 typedef float SAMPLE;
-
-static int fuzzCallback( const void *inputBuffer, void *outputBuffer,
-                         unsigned long framesPerBuffer,
-                         const PaStreamCallbackTimeInfo* timeInfo,
-                         PaStreamCallbackFlags statusFlags,
-                         void *userData );
-
 
 static int gNumNoInputs = 0;
 

@@ -8,8 +8,16 @@ conan_basic_setup()
 find_package(Qt5Widgets CONFIG REQUIRED)
 
 include_directories(${CMAKE_INCLUDE_PATH})
+include_directories(code/include/client)
+
+set(CLIENT_SOURCES
+        code/src/client/Contact.cpp
+        code/src/client/Core.cpp
+        code/src/client/Database.cpp
+        code/src/client/Graphical.cpp
+        code/src/client/main.cpp)
 
 add_executable(babel
-  src/client/main.cpp)
+  ${CLIENT_SOURCES})
 
 target_link_libraries(babel ${CONAN_LIBS} Qt5::Widgets)

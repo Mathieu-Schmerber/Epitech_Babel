@@ -8,6 +8,7 @@
 #include <iostream>
 #include "ArgParser.hpp"
 #include "Core.hpp"
+#include "Error.hpp"
 
 int error(const std::string &msg)
 {
@@ -29,7 +30,9 @@ int setup(const std::pair<std::string, int> &args)
 
     try {
         core->initialize();
-    } catch(std::exception &error) { //TODO: Link custom error class
+    } catch(Error &err) { //TODO: Link custom error class
+        std::cerr << "Error [" << err.getType() << "]: " << err.getMessage()
+                  << std::endl;
         return 84;
     }
     return 0;

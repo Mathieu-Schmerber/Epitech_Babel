@@ -1,41 +1,74 @@
 #include <stdio.h>
 #include <math.h>
+#include "Audio.hpp"
 #include "portaudio.h"
-
-#define SAMPLE_RATE         (44100)
-#define PA_SAMPLE_TYPE      paFloat32
-#define FRAMES_PER_BUFFER   paFramesPerBufferUnspecified
 
 typedef float SAMPLE;
 
 static int gNumNoInputs = 0;
 
-static int fuzzCallback( const void *inputBuffer, void *outputBuffer,
-                         unsigned long framesPerBuffer,
-                         const PaStreamCallbackTimeInfo* timeInfo,
-                         PaStreamCallbackFlags statusFlags,
-                         void *userData )
+Audio::Audio(){}
+
+Audio::~Audio(){}
+
+bool Audio::InitAudio()
 {
-    SAMPLE *out = (SAMPLE*)outputBuffer;
-    const SAMPLE *in = (const SAMPLE*)inputBuffer;
-    unsigned int i;
-    (void) timeInfo; /* Prevent unused variable warnings. */
+    error = Pa_Initialize();
+    if (error != paNoError) {
+        Error();
+        return false;
+    }
+    return true;
+}
+
+bool Audio::InitInput()
+{
+    inputParameters.device = Pa_GetDefaultInputDevice();
+    if (inputParameters.device == paNoDevice) {
+      fprintf(stderr,"Error: No default input device.\n");
+      Error();
+      return false;
+    }
+    inputParameters.channelCount = 2;       /* stereo input */
+    inputParameters.sampleFormat = PA_SAMPLE_TYPE;
+    inputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
+    inputParameters.hostApiSpecificStreamInfo = nullptr;
+    return true;
+}
+
+bool Audio::InitOutput()
+{
+    outputParameters.device = Pa_GetDefaultOutputDevice(); /* default output device */
+    if (outputParameters.device == paNoDevice) {
+      fprintf(stderr,"Error: No default output device.\n");
+      Error();
+      return false;
+    }
+    outputParameters.channelCount = 2;       /* stereo output */
+    outputParameters.sampleFormat = PA_SAMPLE_TYPE;
+    outputParameters.suggestedLatency = Pa_GetDeviceInfo( outputParameters.device )->defaultLowOutputLatency;
+    outputParameters.hostApiSpecificStreamInfo = nullptr;
+    return true;
+}
+
+int Audio::FuzzCallback(const void *inputBuffer, void *outputBuffer,
+    unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo *timeInfo,
+    PaStreamCallbackFlags statusFlags, void *userData)
+{
+    auto out = (SAMPLE*)outputBuffer;
+    auto in = (const SAMPLE*)inputBuffer;
+    (void) timeInfo;
     (void) statusFlags;
     (void) userData;
 
-    if( inputBuffer == NULL )
-    {
-        for( i=0; i<framesPerBuffer; i++ )
-        {
+    if (inputBuffer == nullptr) {
+        for(unsigned int i = 0; i < framesPerBuffer; i++) {
             *out++ = 0;  /* left - silent */
             *out++ = 0;  /* right - silent */
         }
         gNumNoInputs += 1;
-    }
-    else
-    {
-        for( i=0; i<framesPerBuffer; i++ )
-        {
+    } else {
+        for (unsigned int i = 0; i < framesPerBuffer; i++) {
             *out++ = *in++;
             *out++ = *in++;
         }
@@ -43,63 +76,48 @@ static int fuzzCallback( const void *inputBuffer, void *outputBuffer,
     return paContinue;
 }
 
-int main(void);
-int main(void)
+bool Audio::OpenStream()
 {
-    PaStreamParameters inputParameters, outputParameters;
-    PaStream *stream;
-    PaError err;
+    error = Pa_OpenStream(
+          &stream,
+          &inputParameters,
+          &outputParameters,
+          SAMPLE_RATE,
+          FRAMES_PER_BUFFER,
+          0,
+          FuzzCallback,
+        (void*)this);
+    if (error != paNoError)
+        return false;
+        //goto error;
+    return true;
+}
 
-    err = Pa_Initialize();
-    if( err != paNoError ) goto error;
+bool Audio::StartStream()
+{
+    error = Pa_StartStream(stream);
+    if (error != paNoError)
+        return false;
+        //goto error;
+    return true;
+}
 
-    inputParameters.device = Pa_GetDefaultInputDevice(); /* default input device */
-    if (inputParameters.device == paNoDevice) {
-      fprintf(stderr,"Error: No default input device.\n");
-      goto error;
+bool Audio::CloseStream()
+{
+    error = Pa_CloseStream(stream);
+    if (error != paNoError) {
+        cerr << "Error occured when closing stream." << endl;
+        //goto error
+        return false;
     }
-    inputParameters.channelCount = 2;       /* stereo input */
-    inputParameters.sampleFormat = PA_SAMPLE_TYPE;
-    inputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
-    inputParameters.hostApiSpecificStreamInfo = NULL;
-
-    outputParameters.device = Pa_GetDefaultOutputDevice(); /* default output device */
-    if (outputParameters.device == paNoDevice) {
-      fprintf(stderr,"Error: No default output device.\n");
-      goto error;
-    }
-    outputParameters.channelCount = 2;       /* stereo output */
-    outputParameters.sampleFormat = PA_SAMPLE_TYPE;
-    outputParameters.suggestedLatency = Pa_GetDeviceInfo( outputParameters.device )->defaultLowOutputLatency;
-    outputParameters.hostApiSpecificStreamInfo = NULL;
-
-    err = Pa_OpenStream(
-              &stream,
-              &inputParameters,
-              &outputParameters,
-              SAMPLE_RATE,
-              FRAMES_PER_BUFFER,
-              0, /* paClipOff, */  /* we won't output out of range samples so don't bother clipping them */
-              fuzzCallback,
-              NULL );
-    if( err != paNoError ) goto error;
-
-    err = Pa_StartStream( stream );
-    if( err != paNoError ) goto error;
-
-    printf("Hit ENTER to stop program.\n");
-    getchar();
-    err = Pa_CloseStream( stream );
-    if( err != paNoError ) goto error;
-
-    printf("Finished. gNumNoInputs = %d\n", gNumNoInputs );
     Pa_Terminate();
-    return 0;
+    return true;
+}
 
-error:
-    Pa_Terminate();
-    fprintf( stderr, "An error occured while using the portaudio stream\n" );
-    fprintf( stderr, "Error number: %d\n", err );
-    fprintf( stderr, "Error message: %s\n", Pa_GetErrorText( err ) );
-    return -1;
+bool Audio::Error()
+{
+    fprintf(stderr, "An error occured while using the portaudio stream\n");
+    fprintf(stderr, "Error number: %d\n", error);
+    fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(error));
+    return false;
 }

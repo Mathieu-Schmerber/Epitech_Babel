@@ -8,9 +8,9 @@
 #ifndef CPP_Core_HPP
 #define CPP_Core_HPP
 
+#include "ArgParser.hpp"
 #include "Database.hpp"
 #include "Graphical.hpp"
-#include "ArgParser.hpp"
 
 class Core
 {

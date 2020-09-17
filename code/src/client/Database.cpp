@@ -21,5 +21,11 @@ void Database::connect()
 std::vector<Contact *> Database::getContactList()
 {
     // Call server and receive list
-    return {new Contact("127.0.0.1", "Mathieu")};
+    return {new Contact("127.0.0.1", "Mathieu"),
+            new Contact("127.0.0.1", "Lucas"),
+            new Contact("127.0.0.1", "Theo"),
+            new Contact("127.0.0.1", "Paques"),
+            new Contact("127.0.0.1", "Thomas"),
+            new Contact("127.0.0.1", "Pauline"),
+            new Contact("127.0.0.1", "Axel")};
 }

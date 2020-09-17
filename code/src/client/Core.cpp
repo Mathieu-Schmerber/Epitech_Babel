@@ -12,7 +12,7 @@ Core::Core(ArgParser *parser)
     std::pair<std::string, int> serverArgs = parser->getParsedArgs();
 
     this->_database = new Database(serverArgs.first, serverArgs.second);
-    this->_interface = new Graphical({150, 150}, "Babel",
+    this->_interface = new Graphical({700, 450}, "Babel",
                                      parser->getAC(), parser->getAV());
     delete parser;
 }
@@ -30,6 +30,6 @@ void Core::initialize()
     this->_database->connect();
     contactList = this->_database->getContactList();
     for (auto &contact : contactList)
-        this->_interface->addButton(contact);
+        this->_interface->getWindow()->addButton(contact->getName());
     this->_interface->display();
 }

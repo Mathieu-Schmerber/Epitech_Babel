@@ -5,24 +5,30 @@
 ** Graphical
 */
 
+#include <iostream>
 #include "Graphical.hpp"
 
 Graphical::Graphical(const std::pair<int, int> &size, const std::string &title,
                      int ac, char **av)
 {
     this->_app = new QApplication(ac, av);
+    this->_window = new Window(size, title);
+    this->_window->setFixedSize(size.first, size.second);
 }
 
-Graphical::~Graphical() = default;
-
-void Graphical::addButton(Contact *content)
+Graphical::~Graphical()
 {
-    this->_buttons.push_back(new QPushButton(content->getName().c_str()));
+    delete this->_window;
 }
 
 void Graphical::display() const
 {
-    for (auto &button : this->_buttons)
-        button->show();
+    this->_window->layout();
+    this->_window->show();
     this->_app->exec();
+}
+
+Window *Graphical::getWindow() const
+{
+    return this->_window;
 }

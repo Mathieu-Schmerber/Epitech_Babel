@@ -8,24 +8,20 @@
 #ifndef CPP_Graphical_HPP
 #define CPP_Graphical_HPP
 
-#include <string>
-#include <vector>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QPushButton>
-#include "Contact.hpp"
+#include "Window.hpp"
 
 class Graphical
 {
 	private:
+        Window *_window;
         QApplication *_app;
-        std::vector<QPushButton *> _buttons;
 
 	public:
         Graphical(const std::pair<int, int> &size, const std::string &title,
                   int ac, char **av);
         ~Graphical();
 
-        void addButton(Contact *content);
+        Window *getWindow() const;
         void display() const;
 };
 

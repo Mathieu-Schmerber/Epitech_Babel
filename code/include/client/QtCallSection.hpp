@@ -30,6 +30,7 @@ class QtCallSection : public QWidget
         QPushButton *_hangup;
 
         QLabel *createText(const std::string &text, int size, bool isBold);
+        void setBackgroundColor(const QColor &color);
 
 private slots:
         void hangup();

@@ -13,16 +13,16 @@
 class ArgParser
 {
 	private:
-        int _ac;
+        int *_ac;
         char **_av;
 	public:
-		ArgParser(int ac, char **av);
+		ArgParser(int *ac, char **av);
 		~ArgParser();
 
 		bool isValid() const;
 		bool isUsage() const;
 		char **getAV() const;
-		int getAC() const;
+		int *getAC() const;
 		std::pair<std::string, int> getParsedArgs() const;
 };
 

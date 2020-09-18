@@ -19,15 +19,17 @@
 class Window : public QWidget
 {
 	private:
-        std::pair<int, int> _lastCell;
+        std::pair<int, int> _size;
+        std::pair<int, int> _gridLimit;
         std::vector<QPushButton *> _buttons;
 
-    public:
+        void layout();
+public:
 		Window(const std::pair<int, int> &size, const std::string &title);
 		~Window();
 
         void addButton(const std::string &content);
-        void layout();
+        void display();
 };
 
 #endif

@@ -10,12 +10,13 @@
 
 #include "ArgParser.hpp"
 #include "Database.hpp"
-#include "Graphical.hpp"
+#include "Window.hpp"
 
 class Core
 {
 	private:
-        Graphical *_interface;
+        Window *_window;
+        QApplication *_app;
         Database *_database;
 
 	public:

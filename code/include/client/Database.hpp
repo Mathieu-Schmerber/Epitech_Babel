@@ -16,21 +16,22 @@
 
 class Database : public QWidget
 {
+Q_OBJECT
 	private:
         const std::string _ip;
         const int _port;
         QTcpSocket *_socket;
 
-private slots:
-    void onSocketError(QAbstractSocket::SocketError socketError);
-    void onDataReceived();
+    public slots:
+        void onDataReceived();
+        void onServerClosed();
 
+    public:
+        explicit Database(const std::string &ip, const int &port, QWidget *parent);
+        ~Database();
 
-public:
-		Database(const std::string &ip, const int &port, QWidget *parent);
-		~Database() = default;
-
-		std::vector<Contact *> getContactList();
+        void connect();
+        std::vector<Contact *> getContactList();
 };
 
 #endif

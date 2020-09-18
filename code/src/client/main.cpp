@@ -29,7 +29,7 @@ int setup(ArgParser *parser)
 
     try {
         core->initialize();
-    } catch(Error &err) { //TODO: Link custom error class
+    } catch(Error &err) {
         std::cerr << "Error [" << err.getType() << "]: " << err.getMessage()
                   << std::endl;
         return 84;

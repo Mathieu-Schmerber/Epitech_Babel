@@ -10,19 +10,26 @@
 
 #include <string>
 #include <vector>
+#include <QtNetwork/QTcpSocket>
+#include <QtWidgets/QtWidgets>
 #include "Contact.hpp"
 
-class Database
+class Database : public QWidget
 {
 	private:
         const std::string _ip;
         const int _port;
+        QTcpSocket *_socket;
 
-	public:
-		Database(const std::string &ip, const int &port);
+private slots:
+    void onSocketError(QAbstractSocket::SocketError socketError);
+    void onDataReceived();
+
+
+public:
+		Database(const std::string &ip, const int &port, QWidget *parent);
 		~Database() = default;
 
-		void connect();
 		std::vector<Contact *> getContactList();
 };
 

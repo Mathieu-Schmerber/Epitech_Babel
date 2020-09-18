@@ -10,6 +10,7 @@ else()
 endif()
 
 find_package(Qt5Widgets CONFIG REQUIRED)
+find_package(Qt5Network CONFIG REQUIRED)
 
 include_directories(${CMAKE_INCLUDE_PATH})
 include_directories(code/include/client)
@@ -27,4 +28,4 @@ set(CLIENT_SOURCES
 add_executable(babel_client
         ${CLIENT_SOURCES})
 
-target_link_libraries(babel_client ${CONAN_LIBS} Qt5::Widgets)
+target_link_libraries(babel_client ${CONAN_LIBS} Qt5::Widgets Qt5::Network)

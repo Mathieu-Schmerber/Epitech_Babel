@@ -12,12 +12,13 @@
 #include <cmath>
 #include <iostream>
 #include "portaudio.h"
+#include "Opus.hpp"
 
 typedef float SAMPLE;
 
 #define SAMPLE_RATE         (44100)
-#define PA_SAMPLE_TYPE      paFloat32
-#define FRAMES_PER_BUFFER   (512)
+#define PA_SAMPLE_TYPE      paInt32
+#define FRAMES_PER_BUFFER   (480)
 #define NUM_CHANNELS        (2)
 
 using namespace std;
@@ -49,6 +50,10 @@ class Audio
         bool InitAudio();
         bool InitInput();
         bool InitOutput();
+        bool AllocSample();
+        SAMPLE *GetInputSample();
+        SAMPLE *GetOutputSample();
+        void SetOutputSample(SAMPLE *sample);
         bool OpenStream();
         bool StartStream();
         bool ReadStream();

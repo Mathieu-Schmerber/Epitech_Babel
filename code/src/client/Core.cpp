@@ -24,7 +24,7 @@ Core::~Core()
     delete this->_app;
 }
 
-void Core::initialize()l
+void Core::initialize()
 {
     std::vector<Contact *> contactList;
 

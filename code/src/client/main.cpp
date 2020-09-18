@@ -5,6 +5,8 @@
 ** main babel
 */
 
+#include "Audio.hpp"
+#include "Opus.hpp"
 #include <iostream>
 #include "Core.hpp"
 #include "Error.hpp"
@@ -39,12 +41,29 @@ int setup(ArgParser *parser)
 
 int main(int ac, char **av)
 {
-    auto *parser = new ArgParser(&ac, av);
+    /*auto *parser = new ArgParser(&ac, av);
 
     if (parser->isUsage())
         return usage(0);
     else if (!parser->isValid())
         return error("Error: Invalid Arguments.");
-    return setup(parser);
+    return setup(parser);*/
+    Audio audio;
+    Opus opus;
+    unsigned char *encoded;
+
+    audio.InitAudio();
+    audio.InitInput();
+    //audio.InitOutput();
+    //audio.OpenStream();
+    //audio.StartStream();
+    /*while (true) {
+        audio.ReadStream();
+        encoded = opus.Encode(audio.GetInputSample());
+        audio.SetOutputSample(opus.Decode(encoded));
+        audio.WriteStream();
+    }*/
+    //audio.CloseStream();
+    return (0);
 }
 

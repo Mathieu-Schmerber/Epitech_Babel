@@ -10,6 +10,7 @@ else()
 endif()
 
 find_package(Qt5Widgets CONFIG REQUIRED)
+find_package(opus REQUIRED)
 
 include_directories(${CMAKE_INCLUDE_PATH})
 include_directories(code/include/client)
@@ -19,7 +20,6 @@ set(CLIENT_SOURCES
         code/src/client/Contact.cpp
         code/src/client/Core.cpp
         code/src/client/Database.cpp
-        code/src/client/Graphical.cpp
         code/src/client/main.cpp
         code/src/client/Audio.cpp
         code/src/client/Opus.cpp
@@ -29,4 +29,12 @@ set(CLIENT_SOURCES
 add_executable(babel_client
         ${CLIENT_SOURCES})
 
+
 target_link_libraries(babel_client ${CONAN_LIBS} Qt5::Widgets)
+target_link_libraries(babel_client opus)
+if (WIN32)
+    target_link_libraries(babel_client portaudio_x64)
+else()
+    target_link_libraries(babel_client portaudio)
+    target_link_libraries(babel_client dl)
+endif()

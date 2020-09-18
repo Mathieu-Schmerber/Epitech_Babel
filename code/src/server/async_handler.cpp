@@ -31,7 +31,7 @@ async_handler::async_handler(boost::asio::io_service& io_service) : _socket(io_s
                     boost::asio::placeholders::bytes_transferred));
 
     _socket.async_write_some(
-        boost::asio::buffer(data, max_length),
+        boost::asio::buffer(msg, max_length),
         boost::bind(&async_handler::handle_write,
                     shared_from_this(),
                     boost::asio::placeholders::error,

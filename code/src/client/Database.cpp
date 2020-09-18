@@ -38,12 +38,14 @@ void Database::connect()
 
 std::vector<Contact *> Database::getContactList()
 {
-    std::vector<Contact *> tmp;
-
-    this->_socket->connectToHost(QString(this->_ip.c_str()), this->_port);
-    for (int i = 0; i < 30; ++i)
-        tmp.push_back(new Contact("127.0.0.1", std::to_string(i)));
-    return tmp;
+    this->connect();
+    return {new Contact("127.0.0.1", "Thomas", "4242"),
+            new Contact("127.0.0.1", "Lucas", "1234"),
+            new Contact("127.0.0.1", "Theo", "1111"),
+            new Contact("127.0.0.1", "Axel", "4444"),
+            new Contact("127.0.0.1", "Paques", "7777"),
+            new Contact("127.0.0.1", "Pauline", "9999"),
+            new Contact("127.0.0.1", "Mathieu", "4567")};
 }
 
 void Database::onDataReceived()

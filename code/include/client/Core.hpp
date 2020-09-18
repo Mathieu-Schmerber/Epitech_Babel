@@ -11,6 +11,7 @@
 #include "ArgParser.hpp"
 #include "Database.hpp"
 #include "Window.hpp"
+#include "CallManager.hpp"
 
 class Core
 {
@@ -18,6 +19,7 @@ class Core
         Window *_window;
         QApplication *_app;
         Database *_database;
+        CallManager *_manager;
 
 	public:
 		Core(ArgParser *parser);

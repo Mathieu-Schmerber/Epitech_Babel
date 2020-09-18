@@ -15,13 +15,15 @@ class Contact
 	private:
         const std::string _ip;
         const std::string _name;
+        const std::string _port;
 
 	public:
-		Contact(const std::string &ip, const std::string &name);
+		Contact(const std::string &ip, const std::string &name, const std::string & port);
 		~Contact() = default;
 
     std::string getName() const;
     std::string getIp() const;
+    std::string getPort() const;
 };
 
 #endif

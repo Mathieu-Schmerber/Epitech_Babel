@@ -11,19 +11,34 @@
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QVBoxLayout>
+#include <QSignalMapper>
+
+class CallManager;
+class Contact;
 
 class QtContactList : public QWidget
 {
-	private:
+Q_OBJECT
+private:
         std::vector<QPushButton *> _buttons;
+        std::vector<Contact *> _contacts;
         QWidget *_container;
         QScrollArea *_scroll;
         QVBoxLayout *_layout;
+        CallManager *_manager;
+        QSignalMapper *_mapper;
+
+    void addContactButton(const std::string &name, size_t index);
+
+private slots:
+        void callClicked(int index);
+
 	public:
 		QtContactList(QWidget *parent, int w, int h);
 		~QtContactList();
 
-        void addButton(const std::string &content);
+		void setCallManager(CallManager *manager);
+        void pushContacts(const std::vector<Contact *> &list);
         void display();
 };
 

@@ -36,7 +36,8 @@ set(CLIENT_HEADERS
         code/include/client/Database.hpp
         code/include/client/Window.hpp
         code/include/client/QtContactList.hpp
-        code/include/client/QtCallSection.hpp)
+        code/include/client/QtCallSection.hpp
+        code/include/client/CallManager.hpp)
 
 set(CLIENT_SOURCES
         code/src/client/ArgParser.cpp
@@ -46,6 +47,7 @@ set(CLIENT_SOURCES
         code/src/client/Window.cpp
         code/src/client/QtContactList.cpp
         code/src/client/QtCallSection.cpp
+        code/src/client/CallManager.cpp
         code/src/client/main.cpp)
 
 add_executable(babel_client

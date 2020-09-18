@@ -2,8 +2,12 @@ project(Babel)
 cmake_minimum_required(VERSION 2.8.12)
 add_definitions("-fPIC")
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    conan_basic_setup()
+else()
+    message(WARNING "The file ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake doesn't exist, you have to run conan install first")
+endif()
 
 find_package(Qt5Widgets CONFIG REQUIRED)
 
@@ -15,10 +19,15 @@ set(CLIENT_SOURCES
         code/src/client/Contact.cpp
         code/src/client/Core.cpp
         code/src/client/Database.cpp
+<<<<<<< HEAD
         code/src/client/Graphical.cpp
         code/src/client/main.cpp
         code/src/client/Audio.cpp
         code/src/client/Opus.cpp)
+=======
+        code/src/client/Window.cpp
+        code/src/client/main.cpp)
+>>>>>>> master
 
 add_executable(babel_client
         ${CLIENT_SOURCES})

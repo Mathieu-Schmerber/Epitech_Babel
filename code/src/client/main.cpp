@@ -39,7 +39,7 @@ int setup(ArgParser *parser)
 
 int main(int ac, char **av)
 {
-    auto *parser = new ArgParser(ac, av);
+    auto *parser = new ArgParser(&ac, av);
 
     if (parser->isUsage())
         return usage(0);

@@ -16,7 +16,9 @@ set(CLIENT_SOURCES
         code/src/client/Core.cpp
         code/src/client/Database.cpp
         code/src/client/Graphical.cpp
-        code/src/client/main.cpp)
+        code/src/client/main.cpp
+        code/src/client/Audio.cpp
+        code/src/client/Opus.cpp)
 
 add_executable(babel_client
         ${CLIENT_SOURCES})

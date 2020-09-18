@@ -2,8 +2,6 @@
 #include "Audio.hpp"
 #include "portaudio.h"
 
-typedef float SAMPLE;
-
 static int gNumNoInputs = 0;
 
 Audio::Audio(){}
@@ -108,6 +106,38 @@ bool Audio::StartStream()
     if (error != paNoError)
         return false;
         //goto error;
+    return true;
+}
+
+bool Audio::ReadStream()
+{
+    /* Need to be moved */
+    inputSample = (SAMPLE *)((SAMPLE_RATE * NUM_CHANNELS) * (sizeof(SAMPLE)));
+    if (!inputSample) {
+        cerr << "Could not allocate record array." << endl;
+        return false;
+    }
+    /* To be called in a loop */
+    if ((error = Pa_ReadStream(stream, inputSample, FRAMES_PER_BUFFER)) != paNoError) {
+        cerr << "Pa_ReadStream failed: " << Pa_GetErrorText(error) << endl;
+        return false;
+    }
+    return true;
+}
+
+bool Audio::WriteStream()
+{
+    /* Need to be moved */
+        outputSample = (SAMPLE *)((SAMPLE_RATE * NUM_CHANNELS) * (sizeof(SAMPLE)));
+    if (!outputSample) {
+        cerr << "Could not allocate record array." << endl;
+        return false;
+    }
+    /* To be called in a loop */
+    if ((error = Pa_WriteStream(stream, outputSample, FRAMES_PER_BUFFER)) != paNoError) {
+        cerr << "Pa_WriteStream failed: " << Pa_GetErrorText(error) << endl;
+        return false;
+    }
     return true;
 }
 

@@ -8,15 +8,17 @@
 #ifndef CPP_Audio_HPP
 #define CPP_Audio_HPP
 
-#include <stdio.h>
-#include <math.h>
+#include <cstdio>
+#include <cmath>
 #include <iostream>
 #include "portaudio.h"
 
-#define NUM_SECONDS   (100)
+typedef float SAMPLE;
+
 #define SAMPLE_RATE         (44100)
 #define PA_SAMPLE_TYPE      paFloat32
-#define FRAMES_PER_BUFFER   paFramesPerBufferUnspecified
+#define FRAMES_PER_BUFFER   (512)
+#define NUM_CHANNELS        (2)
 
 using namespace std;
 
@@ -27,6 +29,8 @@ class Audio
         PaStreamParameters outputParameters;
         PaStream *stream;
         PaError error;
+        SAMPLE *inputSample;
+        SAMPLE *outputSample;
 
         int FuzzCallbackMethod(const void *inputBuffer, void *outputBuffer,
                             unsigned long framesPerBuffer,
@@ -47,6 +51,8 @@ class Audio
         bool InitOutput();
         bool OpenStream();
         bool StartStream();
+        bool ReadStream();
+        bool WriteStream();
         bool CloseStream();
 };
 

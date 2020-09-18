@@ -11,9 +11,9 @@ Core::Core(ArgParser *parser)
 {
     std::pair<std::string, int> serverArgs = parser->getParsedArgs();
 
-    this->_database = new Database(serverArgs.first, serverArgs.second);
     this->_app = new QApplication(*parser->getAC(), parser->getAV());
     this->_window = new Window({1000, 800}, "Babel");
+    this->_database = new Database(serverArgs.first, serverArgs.second, this->_window);
     delete parser;
 }
 

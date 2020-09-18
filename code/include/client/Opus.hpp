@@ -29,6 +29,8 @@ class Opus
         bool InitDecoder();
         bool Encode();
         bool Decode();
+        bool DestroyEncoder();
+        bool DestroyDecoder();
 };
 
 #endif

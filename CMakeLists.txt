@@ -19,15 +19,12 @@ set(CLIENT_SOURCES
         code/src/client/Contact.cpp
         code/src/client/Core.cpp
         code/src/client/Database.cpp
-<<<<<<< HEAD
         code/src/client/Graphical.cpp
         code/src/client/main.cpp
         code/src/client/Audio.cpp
-        code/src/client/Opus.cpp)
-=======
+        code/src/client/Opus.cpp
         code/src/client/Window.cpp
         code/src/client/main.cpp)
->>>>>>> master
 
 add_executable(babel_client
         ${CLIENT_SOURCES})

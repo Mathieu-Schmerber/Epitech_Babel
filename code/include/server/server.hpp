@@ -8,21 +8,19 @@
 #ifndef SERVER_HPP_
 #define SERVER_HPP_
 
-#include "async.hpp"
+#include <iostream>
+#include <boost/asio.hpp>
+#include <boost/bind.hpp>
+#include <boost/enable_shared_from_this.hpp>
+#include "async_handler.hpp"
 
 class server
 {
     public:
-        server(boost::asio::io_context& io_context);
-
+        server(boost::asio::io_service& io_service);
         void start_accept();
-        void handle_accept(boost::shared_ptr<async> new_client, const boost::system::error_code& error);
-
-        //boost::asio::io_context _io_context;
-        //boost::asio::ip::tcp::acceptor _acceptor;
-
+        void handle_accept(boost::shared_ptr<async_handler> client, const boost::system::error_code& err);
     private:
-        boost::asio::io_context& _io_context;
         boost::asio::ip::tcp::acceptor _acceptor;
 };
 

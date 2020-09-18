@@ -24,14 +24,14 @@ Core::~Core()
     delete this->_app;
 }
 
-void Core::initialize()l
+void Core::initialize()
 {
     std::vector<Contact *> contactList;
 
     this->_database->connect();
     contactList = this->_database->getContactList();
     for (auto &contact : contactList)
-        this->_window->addButton(contact->getName());
+        this->_window->getContactList()->addButton(contact->getName());
     this->_window->display();
     this->_app->exec();
 }

@@ -20,6 +20,8 @@ set(CLIENT_SOURCES
         code/src/client/Core.cpp
         code/src/client/Database.cpp
         code/src/client/Window.cpp
+        code/src/client/QtContactList.cpp
+        code/src/client/QtCallSection.cpp
         code/src/client/main.cpp)
 
 add_executable(babel_client

@@ -9,44 +9,39 @@
 
 Window::Window(const std::pair<int, int> &size, const std::string &title) : QWidget()
 {
+    int Vpadding = 10;
+    int Hpadding = 10;
+    int listWidth = 240;
+
     this->_size = size;
     this->_gridLimit = {5, 10};
     this->setFixedSize(size.first, size.second);
+    this->_contactList = new QtContactList(this, listWidth, size.second - (Vpadding * 2));
+    this->_callSection = new QtCallSection(this);
+    this->_callSection->resize(size.first - listWidth - (Hpadding * 2), size.second - (Vpadding * 2));
+    this->_contactList->move(Hpadding, Vpadding);
+    this->_callSection->move(listWidth + Hpadding, Vpadding);
 }
 
 Window::~Window()
 {
-    for (auto &button : this->_buttons)
-        delete button;
-}
-
-void Window::addButton(const std::string &content)
-{
-    const std::pair<int, int> btnSize = {200, 50};
-
-    QPushButton *btn = new QPushButton(content.c_str(), this);
-
-    btn->setStyleSheet("text-align:left;");
-    btn->setFont(QFont(QCoreApplication::applicationDirPath() + "/righteous.ttf", btnSize.second * 0.25));
-    btn->setIcon(QIcon(QCoreApplication::applicationDirPath() + "/phone.png"));
-    btn->setIconSize(QSize(btnSize.second * 0.75, btnSize.second * 0.75));
-    btn->setFixedSize(btnSize.first, btnSize.second);
-    this->_buttons.push_back(btn);
-}
-
-void Window::layout()
-{
-    int cumulY = 0;
-    const std::pair<int, int> btnSize = {200, 50};
-
-    for (auto &btn : this->_buttons) {
-        btn->move(0, cumulY);
-        cumulY += btnSize.second;
-    }
+    delete this->_contactList;
+    delete this->_callSection;
 }
 
 void Window::display()
 {
-    this->layout();
+    this->_contactList->display();
+    this->_callSection->display();
     this->show();
+}
+
+QtContactList *Window::getContactList() const
+{
+    return this->_contactList;
+}
+
+QtCallSection * Window::getCallSection() const
+{
+    return this->_callSection;
 }

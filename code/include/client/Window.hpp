@@ -10,25 +10,25 @@
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QWidget>
-#include <QtWidgets/QPushButton>
 #include <vector>
 #include <string>
-
-#define COLUMN_MAX 5
+#include "QtContactList.hpp"
+#include "QtCallSection.hpp"
 
 class Window : public QWidget
 {
 	private:
         std::pair<int, int> _size;
         std::pair<int, int> _gridLimit;
-        std::vector<QPushButton *> _buttons;
+        QtContactList *_contactList;
+        QtCallSection *_callSection;
 
-        void layout();
 public:
 		Window(const std::pair<int, int> &size, const std::string &title);
 		~Window();
 
-        void addButton(const std::string &content);
+        QtContactList *getContactList() const;
+        QtCallSection *getCallSection() const;
         void display();
 };
 

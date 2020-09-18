@@ -29,7 +29,7 @@ int setup(ArgParser *parser)
 
     try {
         core->initialize();
-    } catch(Error &err) { //TODO: Link custom error class
+    } catch(Error &err) {
         std::cerr << "Error [" << err.getType() << "]: " << err.getMessage()
                   << std::endl;
         return 84;
@@ -39,7 +39,7 @@ int setup(ArgParser *parser)
 
 int main(int ac, char **av)
 {
-    auto *parser = new ArgParser(ac, av);
+    auto *parser = new ArgParser(&ac, av);
 
     if (parser->isUsage())
         return usage(0);

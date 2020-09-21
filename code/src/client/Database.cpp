@@ -39,13 +39,8 @@ void Database::connect()
 std::vector<Contact *> Database::getContactList()
 {
     this->connect();
-    return {new Contact("127.0.0.1", "Thomas", "4242"),
-            new Contact("127.0.0.1", "Lucas", "1234"),
-            new Contact("127.0.0.1", "Theo", "1111"),
-            new Contact("127.0.0.1", "Axel", "4444"),
-            new Contact("127.0.0.1", "Paques", "7777"),
-            new Contact("127.0.0.1", "Pauline", "9999"),
-            new Contact("127.0.0.1", "Mathieu", "4567")};
+    return {new Contact("127.0.0.1", "Port 4242 test", 4242),
+            new Contact("127.0.0.1", "Port 4243 test", 4243)};
 }
 
 void Database::onDataReceived()

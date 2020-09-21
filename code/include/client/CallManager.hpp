@@ -17,17 +17,24 @@ class QtCallSection;
 
 class CallManager : public QWidget
 {
+    Q_OBJECT
 	private:
         Window *_window;
         QtCallSection *_section;
         QUdpSocket *_socket;
-
-public slots:
-    void CallContact(Contact *contact);
+        Contact *_inCall;
 
 	public:
-		CallManager(Window *window);
+		CallManager(Window *window, int socketPort);
 		~CallManager();
+
+		void receiveCall(Contact *contact);
+
+public slots:
+    void startCall(Contact *contact);
+    void confirmCall();
+    void stopCall();
+    void onDataReceived();
 };
 
 #endif

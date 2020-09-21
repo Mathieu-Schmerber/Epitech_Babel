@@ -45,3 +45,23 @@ QtCallSection * Window::getCallSection() const
 {
     return this->_callSection;
 }
+
+void Window::setCallHangupEvent(void (CallManager::*callHangupEvent)())
+{
+    _callHangupEvent = callHangupEvent;
+}
+
+void Window::setCallDeclinedEvent(void (CallManager::*callDeclinedEvent)())
+{
+    _callDeclinedEvent = callDeclinedEvent;
+}
+
+void Window::setCallAcceptedEvent(void (CallManager::*callAcceptedEvent)())
+{
+    _callAcceptedEvent = callAcceptedEvent;
+}
+
+void Window::setCallStartEvent(void (CallManager::*callStartEvent)())
+{
+    _callStartEvent = callStartEvent;
+}

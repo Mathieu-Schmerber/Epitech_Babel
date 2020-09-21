@@ -20,6 +20,7 @@ class QtCallSection : public QWidget
         enum State {
             NO_CALL,
             CALLING,
+            GETTING_CALL,
             IN_CALL
         };
 
@@ -27,13 +28,25 @@ class QtCallSection : public QWidget
         State _state;
         QLabel *_stateTxt;
         QLabel *_infoTxt;
-        QPushButton *_hangup;
+        QPushButton *_hangupBtn;
+        QPushButton *_acceptBtn;
 
         QLabel *createText(const std::string &text, int size, bool isBold);
+        QPushButton *createBtn(const std::string &resource, QSize size);
         void setBackgroundColor(const QColor &color);
 
+        void noCallState();
+        void callingState(Contact *contact);
+        void gettingCallState(Contact *contact);
+        void inCallState(Contact *contact);
+
+signals:
+    void hangupEvt();
+    void acceptEvt();
+
 private slots:
-        void hangup();
+    void hangup();
+    void accept();
 
 	public:
 

@@ -13,7 +13,6 @@
 #include <QtWidgets/QVBoxLayout>
 #include <QSignalMapper>
 
-class CallManager;
 class Contact;
 
 class QtContactList : public QWidget
@@ -25,10 +24,12 @@ private:
         QWidget *_container;
         QScrollArea *_scroll;
         QVBoxLayout *_layout;
-        CallManager *_manager;
         QSignalMapper *_mapper;
 
     void addContactButton(const std::string &name, size_t index);
+
+signals:
+    void startEvt(Contact *);
 
 private slots:
         void callClicked(int index);
@@ -37,7 +38,6 @@ private slots:
 		QtContactList(QWidget *parent, int w, int h);
 		~QtContactList();
 
-		void setCallManager(CallManager *manager);
         void pushContacts(const std::vector<Contact *> &list);
         void display();
 };

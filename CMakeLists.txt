@@ -30,17 +30,16 @@ set(SERVER_SOURCES
         code/src/server/async_handler.cpp)
 
 set(CLIENT_HEADERS
-        code/include/client/ArgParser.hpp
         code/include/client/Contact.hpp
         code/include/client/Core.hpp
         code/include/client/Database.hpp
         code/include/client/Window.hpp
         code/include/client/QtContactList.hpp
         code/include/client/QtCallSection.hpp
-        code/include/client/CallManager.hpp)
+        code/include/client/CallManager.hpp
+        code/include/client/QtNetworkForm.hpp)
 
 set(CLIENT_SOURCES
-        code/src/client/ArgParser.cpp
         code/src/client/Contact.cpp
         code/src/client/Core.cpp
         code/src/client/Database.cpp
@@ -48,6 +47,7 @@ set(CLIENT_SOURCES
         code/src/client/QtContactList.cpp
         code/src/client/QtCallSection.cpp
         code/src/client/CallManager.cpp
+        code/src/client/QtNetworkForm.cpp
         code/src/client/main.cpp)
 
 add_executable(babel_client

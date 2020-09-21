@@ -8,21 +8,24 @@
 #ifndef CPP_Core_HPP
 #define CPP_Core_HPP
 
-#include "ArgParser.hpp"
 #include "Database.hpp"
 #include "Window.hpp"
 #include "CallManager.hpp"
+#include "QtNetworkForm.hpp"
 
 class Core
 {
 	private:
         Window *_window;
         QApplication *_app;
-        Database *_database;
+
+private:
+    Database *_database;
         CallManager *_manager;
+        QtNetworkForm *_networkForm;
 
 	public:
-		Core(ArgParser *parser);
+		Core(int ac, char **av);
 		~Core();
 
 		void initialize();

@@ -7,8 +7,11 @@
 
 #include "Contact.hpp"
 
-Contact::Contact(const std::string &ip, const std::string &name, const std::string &port)
+Contact::Contact(const std::string &ip, const std::string &name, int port)
 : _ip(ip), _name(name), _port(port) {}
+
+Contact::Contact(const Contact &copy)
+: _ip(copy.getIp()), _name(copy.getName()), _port(copy.getPort()) {}
 
 std::string Contact::getName() const
 {
@@ -20,7 +23,7 @@ std::string Contact::getIp() const
     return this->_ip;
 }
 
-std::string Contact::getPort() const
+int Contact::getPort() const
 {
     return this->_port;
 }

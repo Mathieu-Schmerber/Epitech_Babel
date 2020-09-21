@@ -7,7 +7,6 @@
 
 #include <QtWidgets/QApplication>
 #include "QtContactList.hpp"
-#include "CallManager.hpp"
 #include "Contact.hpp"
 
 QtContactList::QtContactList(QWidget *parent, int w, int h) : QWidget(parent)
@@ -49,16 +48,11 @@ void QtContactList::display()
     this->show();
 }
 
-void QtContactList::setCallManager(CallManager *manager)
-{
-    this->_manager = manager;
-}
-
 void QtContactList::callClicked(int index)
 {
     Contact *contact = this->_contacts.at(index);
 
-    this->_manager->CallContact(contact);
+    emit startEvt(contact);
 }
 
 void QtContactList::pushContacts(const std::vector<Contact *> &list)

@@ -4,6 +4,7 @@ babel_client
 bable_server
 cmake-build-debug
 .idea
+.vs
 code/CMakeList.txt
 code/cmake-build-debug
 code/.idea

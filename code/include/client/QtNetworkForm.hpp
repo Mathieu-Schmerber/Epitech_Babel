@@ -42,10 +42,11 @@ public:
 		QtNetworkForm(const std::string &title);
 		~QtNetworkForm();
 
-    const std::string &getSrvIp() const;
-    const std::string &getMyName() const;
-    int getSrvPort() const;
-    int getMyPort() const;
+        void initGUI(const std::string &title);
+        const std::string &getSrvIp() const;
+        const std::string &getMyName() const;
+        int getSrvPort() const;
+        int getMyPort() const;
 };
 
 #endif

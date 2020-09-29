@@ -51,7 +51,7 @@ void QtCallSection::setBackgroundColor(const QColor &color)
 {
     QPalette pal = palette();
 
-    pal.setColor(QPalette::Background, color);
+    pal.setColor(QPalette::Window, color);
     this->setAutoFillBackground(true);
     this->setPalette(pal);
 }

@@ -79,7 +79,7 @@ void CallManager::onDataReceived()
     buffer.resize(this->_socket->pendingDatagramSize());
     _socket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
     if (std::string(buffer.data()) == "start")
-        this->receiveCall(new Contact("", sender.toString().toStdString(), senderPort));
+        this->receiveCall(new Contact("", sender.toString().toUtf8().constData(), senderPort));
     else if (std::string(buffer.data()) == "confirm")
         this->_section->setState(QtCallSection::IN_CALL);
     else if (std::string(buffer.data()) == "stop") {

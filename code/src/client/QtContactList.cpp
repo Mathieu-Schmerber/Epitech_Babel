@@ -39,7 +39,7 @@ void QtContactList::addContactButton(const std::string &name, size_t index)
     btn->setFixedSize(btnSize.first, btnSize.second);
     this->_buttons.push_back(btn);
     this->_layout->addWidget(btn);
-    this->_mapper->setMapping(btn, index);
+    this->_mapper->setMapping(btn, (int)index);
     connect(btn, SIGNAL( clicked() ), this->_mapper, SLOT(map()));
 }
 

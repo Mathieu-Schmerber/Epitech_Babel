@@ -1,0 +1,13 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\code",
+    "\\code\\include",
+    "\\code\\include\\client",
+    "\\code\\src",
+    "\\code\\src\\client",
+    "\\code\\src\\server"
+  ],
+  "SelectedNode": "\\CMakeLists.txt",
+  "PreviewInSolutionExplorer": false
+}

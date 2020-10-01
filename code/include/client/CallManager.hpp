@@ -25,7 +25,7 @@ class CallManager : public QWidget
         Contact *_inCall;
 
 	public:
-		CallManager(Window *window, int socketPort);
+		CallManager(Window *window, const std::string &myIp, int socketPort);
 		~CallManager();
 
 		void receiveCall(Contact *contact);

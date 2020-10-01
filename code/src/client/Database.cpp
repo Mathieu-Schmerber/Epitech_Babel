@@ -27,10 +27,8 @@ void Database::connect()
 {
     QString errorMsg;
 
-    std::cout << "Database => connect()" << std::endl;
     this->_socket->abort();
     this->_socket->connectToHost(QString(this->_ip.c_str()), this->_port);
-    std::cout << "Database => connect() => waitForConnected()" << std::endl;
     if (!this->_socket->waitForConnected()) {
         errorMsg = QString("%1.").arg(_socket->errorString());
         QMessageBox::critical(this, "Database", errorMsg);
@@ -41,8 +39,8 @@ void Database::connect()
 std::vector<Contact *> Database::getContactList()
 {
     this->connect();
-    return {new Contact("127.0.0.1", "Port 4242 test", 4242),
-            new Contact("127.0.0.1", "Port 4243 test", 4243)};
+    return {new Contact("10.26.112.159", "Port 4242 test", 4242),
+            new Contact("10.26.112.159", "Port 4243 test", 4243)};
 }
 
 void Database::onDataReceived()

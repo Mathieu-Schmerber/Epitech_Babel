@@ -9,6 +9,7 @@
 #define CPP_QtNetworkForm_HPP
 
 #include <QtWidgets/QApplication>
+#include <QtNetwork/QHostInfo>
 #include <QtWidgets/QFormLayout>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QLineEdit>
@@ -42,6 +43,7 @@ public:
 		QtNetworkForm(const std::string &title);
 		~QtNetworkForm();
 
+        QString getIPV4() const;
         void initGUI(const std::string &title);
         const std::string &getSrvIp() const;
         const std::string &getMyName() const;

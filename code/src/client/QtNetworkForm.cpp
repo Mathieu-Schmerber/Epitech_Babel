@@ -28,7 +28,7 @@ void QtNetworkForm::initGUI(const std::string &title)
     this->_databaseIpEdit = new QLineEdit();
     this->_databasePortEdit = new QLineEdit();
     this->_myNameEdit = new QLineEdit();
-    this->_myIpLabel = new QLabel("127.0.0.1");
+    this->_myIpLabel = new QLabel(this->getIPV4());
     this->_myPortEdit = new QLineEdit();
     this->_databaseTitle = new QLabel("Babel server");
     this->_myTitle = new QLabel("Babel client");
@@ -50,6 +50,19 @@ void QtNetworkForm::initGUI(const std::string &title)
     this->_layout->addRow(this->_validationBtn);
     this->_validationBtn->setFont(QFont("sans-serif", 14));
     connect(_validationBtn, SIGNAL(clicked()), this, SLOT(saveForm()));
+}
+
+QString QtNetworkForm::getIPV4() const
+{
+    QList<QHostAddress> list = QHostInfo::fromName(QHostInfo::localHostName()).addresses();
+    
+    for (auto& addr : list)
+    {
+        std::cout << addr.toString().toUtf8().constData() << " " << addr.protocol() << std::endl;
+        if (addr.protocol() == QAbstractSocket::NetworkLayerProtocol::IPv4Protocol)
+            return addr.toString();
+    }
+    return QString("127.0.0.1");
 }
 
 const std::string &QtNetworkForm::getSrvIp() const
@@ -74,19 +87,13 @@ const std::string & QtNetworkForm::getMyName() const
 
 void QtNetworkForm::saveForm()
 {
-    std::cout << "QtNetworkForm => saveForm()" << std::endl;
     try {
-        std::cout << "QtNetworkForm => saveForm() -> _srvIp" << std::endl;
         this->_srvIp = this->_databaseIpEdit->text().toUtf8().constData();
-        std::cout << "QtNetworkForm => saveForm() -> _srvPort" << std::endl;
         this->_srvPort = this->_databasePortEdit->text().toInt();
-        std::cout << "QtNetworkForm => saveForm() -> _myPort" << std::endl;
         this->_myPort = this->_myPortEdit->text().toInt();
-        std::cout << "QtNetworkForm => saveForm() -> _myName" << std::endl;
         this->_myName = this->_myNameEdit->text().toUtf8().constData();
     } catch (std::exception &e) {
         throw ServerError("Wrong arguments");
     }
-    std::cout << "QtNetworkForm => saveForm() => emit accept()" << std::endl;
     emit accept();
 }

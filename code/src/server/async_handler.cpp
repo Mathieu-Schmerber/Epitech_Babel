@@ -40,10 +40,16 @@ async_handler::async_handler(boost::asio::io_service& io_service) : _socket(io_s
 
  void async_handler::handle_read(const boost::system::error_code& err, size_t bytes)
  {
-     if (!err)
+     if (!err) {
         std::cout << data << std::endl;
-    else
-    {
+        memset(data, 0, sizeof(data));
+        _socket.async_read_some(
+        boost::asio::buffer(data, max_length),
+        boost::bind(&async_handler::handle_read,
+                    shared_from_this(),
+                    boost::asio::placeholders::error,
+                    boost::asio::placeholders::bytes_transferred));
+     } else {
         std::cerr << "ERROR ==> " << err.message() << std::endl;
         _socket.close(); 
     }

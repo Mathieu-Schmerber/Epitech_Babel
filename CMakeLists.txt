@@ -1,6 +1,6 @@
 project(Babel)
 cmake_minimum_required(VERSION 2.8.12)
-add_definitions("-fPIC")
+add_definitions("-fPIC -g")
 
 if(EXISTS ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
     include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)

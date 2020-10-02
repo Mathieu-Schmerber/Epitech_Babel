@@ -1,6 +1,7 @@
 #include <cstdio>
 #include "Audio.hpp"
 #include "portaudio.h"
+#include <unistd.h>
 
 static int gNumNoInputs = 0;
 
@@ -10,6 +11,17 @@ Audio::~Audio(){}
 
 bool Audio::InitAudio()
 {
+    data.maxFrameIndex = totalFrames = NUM_SECONDS * SAMPLE_RATE / 100; /* Record for a few seconds. */
+    data.frameIndex = 0;
+    numSamples = totalFrames * NUM_CHANNELS;
+    numBytes = numSamples * sizeof(SAMPLE);
+    data.recordedSamples = (SAMPLE *) malloc( numBytes ); /* From now on, recordedSamples is initialised. */
+    if( data.recordedSamples == NULL )
+    {
+        printf("Could not allocate record array.\n");
+        exit (1);
+    }
+
     error = Pa_Initialize();
     if (error != paNoError) {
         Error();
@@ -48,66 +60,151 @@ bool Audio::InitOutput()
     return true;
 }
 
-int Audio::FuzzCallbackMethod(const void *inputBuffer, void *outputBuffer,
-    unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo *timeInfo,
-    PaStreamCallbackFlags statusFlags
-)
-{
-    auto out = (SAMPLE*)outputBuffer;
-    auto in = (const SAMPLE*)inputBuffer;
-    (void) timeInfo;
-    (void) statusFlags;
-
-    if (inputBuffer == nullptr) {
-        for(unsigned int i = 0; i < framesPerBuffer; i++) {
-            *out++ = 0;  /* left - silent */
-            *out++ = 0;  /* right - silent */
-        }
-        gNumNoInputs += 1;
-    } else {
-        for (unsigned int i = 0; i < framesPerBuffer; i++) {
-            *out++ = *in++;
-            *out++ = *in++;
-        }
-    }
-    return paContinue;
-}
-
-int Audio::FuzzCallback(const void *inputBuffer, void *outputBuffer,
+int Audio::PlayCallback(const void *inputBuffer, void *outputBuffer,
     unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo *timeInfo,
     PaStreamCallbackFlags statusFlags, void *userData)
 {
-    return ((Audio*)userData)->FuzzCallbackMethod(inputBuffer, outputBuffer,
-                framesPerBuffer,
-                timeInfo,
-                statusFlags);
+       paTestData *data = (paTestData*)userData;
+       SAMPLE *rptr = &data->recordedSamples[data->frameIndex * NUM_CHANNELS];
+       SAMPLE *wptr = (SAMPLE*)outputBuffer;
+       unsigned int i;
+       int finished;
+       unsigned int framesLeft = data->maxFrameIndex - data->frameIndex;
+   
+       (void) inputBuffer; /* Prevent unused variable warnings. */
+       (void) timeInfo;
+       (void) statusFlags;
+       (void) userData;
+   
+       if( framesLeft < framesPerBuffer )
+       {
+           /* final buffer... */
+           for( i=0; i<framesLeft; i++ )
+           {
+               *wptr++ = *rptr++;  /* left */
+               if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
+           }
+           for( ; i<framesPerBuffer; i++ )
+           {
+               *wptr++ = 0;  /* left */
+               if( NUM_CHANNELS == 2 ) *wptr++ = 0;  /* right */
+           }
+           data->frameIndex += framesLeft;
+           finished = paComplete;
+       }
+       else
+       {
+           for( i=0; i<framesPerBuffer; i++ )
+           {
+               *wptr++ = *rptr++;  /* left */
+               if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
+           }
+           data->frameIndex += framesPerBuffer;
+           finished = paContinue;
+       }
+       return finished;
 }
 
-bool Audio::OpenStream()
+int Audio::RecordCallback(const void *inputBuffer, void *outputBuffer,
+    unsigned long framesPerBuffer, const PaStreamCallbackTimeInfo *timeInfo,
+    PaStreamCallbackFlags statusFlags, void *userData)
+{
+paTestData *data = (paTestData*)userData;
+       const SAMPLE *rptr = (const SAMPLE*)inputBuffer;
+       SAMPLE *wptr = &data->recordedSamples[data->frameIndex * NUM_CHANNELS];
+       long framesToCalc;
+       long i;
+       int finished;
+       unsigned long framesLeft = data->maxFrameIndex - data->frameIndex;
+   
+       (void) outputBuffer; /* Prevent unused variable warnings. */
+       (void) timeInfo;
+       (void) statusFlags;
+       (void) userData;
+   
+       if( framesLeft < framesPerBuffer )
+       {
+           framesToCalc = framesLeft;
+           finished = paComplete;
+       }
+       else
+       {
+           framesToCalc = framesPerBuffer;
+           finished = paContinue;
+       }
+   
+       if( inputBuffer == NULL )
+       {
+           for( i=0; i<framesToCalc; i++ )
+           {
+               *wptr++ = SAMPLE_SILENCE;  /* left */
+               if( NUM_CHANNELS == 2 ) *wptr++ = SAMPLE_SILENCE;  /* right */
+           }
+       }
+       else
+       {
+           for( i=0; i<framesToCalc; i++ )
+           {
+               *wptr++ = *rptr++;  /* left */
+               if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
+           }
+       }
+       data->frameIndex += framesToCalc;
+       return finished;
+}
+
+
+bool Audio::OpenInStream()
 {
     error = Pa_OpenStream(
-          &stream,
-          &inputParameters,
+        &inStream,
+        &inputParameters,
+        NULL,
+        SAMPLE_RATE,
+        FRAMES_PER_BUFFER,
+        paClipOff, /* we won't output out of range samples so don't bother clipping them */
+        RecordCallback,
+        &data);
+    if (error != paNoError)
+        return false;
+        //goto error;
+    return true;
+}
+
+bool Audio::OpenOutStream()
+{
+    error = Pa_OpenStream(
+          &outStream,
+          NULL,
           &outputParameters,
           SAMPLE_RATE,
           FRAMES_PER_BUFFER,
           0, /* paClipOff, */  /* we won't output out of range samples so don't bother clipping them */
-          FuzzCallback,
-        (void*)this);
+          PlayCallback,
+        &data);
     if (error != paNoError)
         return false;
         //goto error;
     return true;
 }
 
-bool Audio::StartStream()
+bool Audio::StartInStream()
 {
-    error = Pa_StartStream(stream);
+    error = Pa_StartStream(inStream);
     if (error != paNoError)
         return false;
-        //goto error;
+
     return true;
 }
+
+bool Audio::StartOutStream()
+{
+    error = Pa_StartStream(outStream);
+    if (error != paNoError)
+        return false;
+    return true;
+}
+
 
 bool Audio::AllocSample()
 {
@@ -116,6 +213,7 @@ bool Audio::AllocSample()
         cerr << "Could not allocate record array." << endl;
         return false;
     }
+    return true;
 }
 
 SAMPLE * Audio::GetInputSample()
@@ -133,37 +231,31 @@ void Audio::SetOutputSample(SAMPLE *sample)
     outputSample = sample;
 }
 
-bool Audio::ReadStream()
+bool Audio::CloseInStream()
 {
-    /* To be called in a loop */
-    if ((error = Pa_ReadStream(stream, inputSample, FRAMES_PER_BUFFER)) != paNoError) {
-        cerr << "Pa_ReadStream failed: " << Pa_GetErrorText(error) << endl;
-        return false;
-    }
-    return true;
-}
-
-bool Audio::WriteStream()
-{
-    /* To be called in a loop */
-    if ((error = Pa_WriteStream(stream, outputSample, FRAMES_PER_BUFFER)) != paNoError) {
-        cerr << "Pa_WriteStream failed: " << Pa_GetErrorText(error) << endl;
-        return false;
-    }
-
-    return true;
-}
-
-bool Audio::CloseStream()
-{
-    error = Pa_CloseStream(stream);
+    error = Pa_CloseStream(inStream);
     if (error != paNoError) {
         cerr << "Error occured when closing stream." << endl;
         //goto error
         return false;
     }
-    Pa_Terminate();
     return true;
+}
+
+bool Audio::CloseOutStream()
+{
+    error = Pa_CloseStream(outStream);
+    if (error != paNoError) {
+        cerr << "Error occured when closing stream." << endl;
+        //goto error
+        return false;
+    }
+    return true;
+}
+
+void Audio::Terminate()
+{
+    Pa_Terminate();
 }
 
 bool Audio::Error()
@@ -172,4 +264,35 @@ bool Audio::Error()
     fprintf(stderr, "Error number: %d\n", error);
     fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(error));
     return false;
+}
+
+void Audio::RecordAudio()
+{
+    data.frameIndex = 0;
+    for (int i = 0; i < numSamples; i++) data.recordedSamples[i] = 0;
+    InitInput();
+    OpenInStream();
+    StartInStream();
+    while ((error = Pa_IsStreamActive ( inStream)) == 1)
+    {
+//        write(1, "REC\n", 4);
+//        Pa_Sleep(100);
+    }
+    CloseInStream();
+}
+
+void Audio::PlayAudio()
+{
+
+    InitOutput();
+    OpenOutStream();
+    StartOutStream();
+    data.frameIndex = 0;
+    while ((error = Pa_IsStreamActive(outStream)) == 1)
+    {
+ //       write(1, "PLE\n", 4);
+  //      Pa_Sleep(100);
+        
+    }
+    CloseOutStream();
 }

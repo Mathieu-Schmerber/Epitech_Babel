@@ -8,6 +8,7 @@
 #include "Audio.hpp"
 #include "Opus.hpp"
 #include <iostream>
+#include <unistd.h>
 #include "Core.hpp"
 #include "Error.hpp"
 
@@ -52,19 +53,14 @@ int main(int ac, char **av)
     Opus opus;
     unsigned char *encoded;
 
+    write(1, "t po trua?\n", 10);
     audio.InitAudio();
-    audio.InitInput();
-    audio.InitOutput();
-    audio.OpenStream();
-    audio.StartStream();
-    getchar();
-    /*while (true) {
-        audio.ReadStream();
-        encoded = opus.Encode(audio.GetInputSample());
-        audio.SetOutputSample(opus.Decode(encoded));
-        audio.WriteStream();
-    }*/
-    audio.CloseStream();
+    write(1, "t po trub?\n", 10);
+    while (true) {
+    write(1, "t po truc?\n", 10);
+        audio.RecordAudio();
+        audio.PlayAudio();
+    }
     return (0);
 }
 

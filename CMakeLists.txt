@@ -10,7 +10,6 @@ else()
 endif()
 
 find_package(Qt5Widgets CONFIG REQUIRED)
-find_package(opus REQUIRED)
 
 include_directories(${CMAKE_INCLUDE_PATH})
 include_directories(code/include/client)

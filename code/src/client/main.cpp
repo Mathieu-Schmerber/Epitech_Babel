@@ -54,16 +54,17 @@ int main(int ac, char **av)
 
     audio.InitAudio();
     audio.InitInput();
-    //audio.InitOutput();
-    //audio.OpenStream();
-    //audio.StartStream();
+    audio.InitOutput();
+    audio.OpenStream();
+    audio.StartStream();
+    getchar();
     /*while (true) {
         audio.ReadStream();
         encoded = opus.Encode(audio.GetInputSample());
         audio.SetOutputSample(opus.Decode(encoded));
         audio.WriteStream();
     }*/
-    //audio.CloseStream();
+    audio.CloseStream();
     return (0);
 }
 

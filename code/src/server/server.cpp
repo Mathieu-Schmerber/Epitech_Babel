@@ -9,6 +9,7 @@
 
 server::server(boost::asio::io_service& io_service) : _acceptor(io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 6666))
 {
+    _db = new database;
     start_accept();
 }
 

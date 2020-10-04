@@ -6,6 +6,7 @@
 */
 
 #include <iostream>
+#include "TcpQuery.hpp"
 #include "Database.hpp"
 #include "Error.hpp"
 
@@ -36,19 +37,17 @@ void Database::connect()
     }
 }
 
-std::vector<Contact *> Database::getContactList()
-{
-    this->connect();
-    return {new Contact("10.26.112.159", "Port 4242 test", 4242),
-            new Contact("10.26.112.159", "Port 4243 test", 4243)};
-}
-
 void Database::onDataReceived()
 {
+    TcpQuery query(TcpQuery::QueryType::CLIENT_LIST);
+    std::string parsed;
     auto senderSocket = dynamic_cast<QTcpSocket*>(sender());
 
-    if (senderSocket)
-        qDebug() << senderSocket->readAll();
+    if (senderSocket) {
+        parsed = std::string(senderSocket->readAll().data());
+        emit dbUpdateEvt(TcpDeserializeQuery(parsed).getData());
+        std::cout << "[Info] the database has been updated." << std::endl;
+    }
 }
 
 void Database::onServerClosed()

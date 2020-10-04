@@ -7,7 +7,7 @@
 
 #include <QtWidgets/QApplication>
 #include "QtContactList.hpp"
-#include "Contact.hpp"
+#include "code/include/Contact.hpp"
 
 QtContactList::QtContactList(QWidget *parent, int w, int h) : QWidget(parent)
 {
@@ -26,6 +26,12 @@ QtContactList::~QtContactList()
 {
     for (auto &btn : this->_buttons)
         delete btn;
+}
+
+void QtContactList::bindDatabase(Database *db)
+{
+    connect(db, SIGNAL( dbUpdateEvt(const std::vector<Contact> &) ),
+            this, SLOT(pushContacts(const std::vector<Contact> &)));
 }
 
 void QtContactList::addContactButton(const std::string &name, size_t index)
@@ -50,15 +56,15 @@ void QtContactList::display()
 
 void QtContactList::callClicked(int index)
 {
-    Contact *contact = this->_contacts.at(index);
+    Contact contact = this->_contacts.at(index);
 
     emit startEvt(contact);
 }
 
-void QtContactList::pushContacts(const std::vector<Contact *> &list)
+void QtContactList::pushContacts(const std::vector<Contact> &list)
 {
     this->_contacts = list;
     for (size_t i = 0; i < this->_contacts.size(); ++i)
-        this->addContactButton(this->_contacts[i]->getName(), i);
+        this->addContactButton(this->_contacts[i].getName(), i);
     connect(this->_mapper, SIGNAL(mapped(int)), this, SLOT(callClicked(int)));
 }

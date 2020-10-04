@@ -65,27 +65,27 @@ void QtCallSection::noCallState()
     this->_hangupBtn->setVisible(false);
 }
 
-void QtCallSection::callingState(Contact *contact)
+void QtCallSection::callingState(const Contact &contact)
 {
     std::string info;
 
     this->setBackgroundColor(QColor(0, 0, 50));
     this->_stateTxt->setText(QString("Calling, awaiting response"));
-    info = contact->getName() + "\n" + contact->getIp() + ":" + std::to_string(contact->getPort());
+    info = contact.getName() + "\n" + contact.getIp() + ":" + std::to_string(contact.getPort());
     this->_infoTxt->setText(QString(info.c_str()));
     this->_hangupBtn->move(int((this->width() - _hangupBtn->width()) / 2),
                            this->height() - (_hangupBtn->height() * 2));
 }
 
-void QtCallSection::gettingCallState(Contact *contact)
+void QtCallSection::gettingCallState(const Contact &contact)
 {
     std::string info;
-    std::string state = contact->getName() + " is calling";
+    std::string state = contact.getName() + " is calling";
     int padding = 10;
 
     this->setBackgroundColor(QColor(0, 50, 50));
     this->_stateTxt->setText(QString(state.c_str()));
-    info = contact->getName() + "\n" + contact->getIp() + ":" + std::to_string(contact->getPort());
+    info = contact.getName() + "\n" + contact.getIp() + ":" + std::to_string(contact.getPort());
     this->_infoTxt->setText(QString(info.c_str()));
     this->_acceptBtn->setEnabled(true);
     this->_acceptBtn->setVisible(true);
@@ -98,7 +98,7 @@ void QtCallSection::gettingCallState(Contact *contact)
 
 }
 
-void QtCallSection::inCallState(Contact *contact)
+void QtCallSection::inCallState(const Contact &contact)
 {
     this->setBackgroundColor(QColor(50, 0, 50));
     this->_stateTxt->setText("In Call");
@@ -107,7 +107,7 @@ void QtCallSection::inCallState(Contact *contact)
     connect(_hangupBtn, SIGNAL(clicked()), this, SLOT(hangup()));
 }
 
-void QtCallSection::setState(State state, Contact *contact)
+void QtCallSection::setState(State state, const Contact &contact)
 {
     this->_state = state;
     this->_hangupBtn->setEnabled(true);

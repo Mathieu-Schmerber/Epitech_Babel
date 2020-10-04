@@ -15,18 +15,20 @@ else()
     message(WARNING "The file ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake doesn't exist, you have to run conan install first")
 endif()
 
-macro(get_WIN32_WINNT version)
-    if (WIN32 AND CMAKE_SYSTEM_VERSION)
-        set(ver ${CMAKE_SYSTEM_VERSION})
-        string(REPLACE "." "" ver ${ver})
-        string(REGEX REPLACE "([0-9])" "0\\1" ver ${ver})
+if(WIN32)
+    macro(get_WIN32_WINNT version)
+        if (WIN32 AND CMAKE_SYSTEM_VERSION)
+            set(ver ${CMAKE_SYSTEM_VERSION})
+            string(REPLACE "." "" ver ${ver})
+            string(REGEX REPLACE "([0-9])" "0\\1" ver ${ver})
+        
+            set(${version} "0x${ver}")
+        endif()
+    endmacro()
 
-        set(${version} "0x${ver}")
-    endif()
-endmacro()
-
-get_WIN32_WINNT(ver)
-add_definitions(-D_WIN32_WINNT=${ver})
+    get_WIN32_WINNT(ver)
+    add_definitions(-D_WIN32_WINNT=${ver})
+endif()
 
 set(Boost_USE_STATIC_LIBS OFF) 
 set(Boost_USE_MULTITHREADED ON)  
@@ -43,27 +45,33 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${CMAKE_INCLUDE_PATH})
 include_directories(code/include/client)
 include_directories(code/include/server)
+include_directories(code/include/)
 
 set(SERVER_HEADERS
         code/include/server/async_handler.hpp
+        code/include/TcpQuery.hpp
+        code/include/Contact.hpp
         code/include/server/server.hpp)
 
 set(SERVER_SOURCES
         code/src/server/server.cpp
+        code/src/TcpQuery.cpp
+        code/src/Contact.cpp
         code/src/server/async_handler.cpp)
 
 set(CLIENT_HEADERS
-        code/include/client/Contact.hpp
+        code/include/Contact.hpp
         code/include/client/Core.hpp
         code/include/client/Database.hpp
         code/include/client/Window.hpp
         code/include/client/QtContactList.hpp
         code/include/client/QtCallSection.hpp
         code/include/client/CallManager.hpp
+        code/include/TcpQuery.hpp
         code/include/client/QtNetworkForm.hpp)
 
 set(CLIENT_SOURCES
-        code/src/client/Contact.cpp
+        code/src/Contact.cpp
         code/src/client/Core.cpp
         code/src/client/Database.cpp
         code/src/client/Window.cpp
@@ -71,6 +79,7 @@ set(CLIENT_SOURCES
         code/src/client/QtCallSection.cpp
         code/src/client/CallManager.cpp
         code/src/client/QtNetworkForm.cpp
+        code/src/TcpQuery.cpp
         code/src/client/main.cpp)
 
 add_executable(babel_client

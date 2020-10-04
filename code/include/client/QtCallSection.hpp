@@ -11,7 +11,7 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QLabel>
-#include "Contact.hpp"
+#include "code/include/Contact.hpp"
 
 class QtCallSection : public QWidget
 {
@@ -36,9 +36,9 @@ class QtCallSection : public QWidget
         void setBackgroundColor(const QColor &color);
 
         void noCallState();
-        void callingState(Contact *contact);
-        void gettingCallState(Contact *contact);
-        void inCallState(Contact *contact);
+        void callingState(const Contact &contact);
+        void gettingCallState(const Contact &contact);
+        void inCallState(const Contact &contact);
 
 signals:
     void hangupEvt();
@@ -53,7 +53,7 @@ private slots:
 		QtCallSection(QWidget *parent);
 		~QtCallSection();
 
-		void setState(State state, Contact *contact = nullptr);
+		void setState(State state, const Contact &contact = Contact());
 		State getState() const;
 		void display();
 };

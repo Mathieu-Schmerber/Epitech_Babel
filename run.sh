@@ -6,7 +6,7 @@
 ## compile and run
 ##
 
-mkdir -p build && cd build # creates build directory
-conan install --build=missing .. && cmake .. && cmake --build . # compiles conan and cmake
-cp ../code/resources/* bin # copies resources to build/bin
+mkdir -p build && cd build
+conan install --build=missing .. && cmake ..
+cmake --build .
 cd ..

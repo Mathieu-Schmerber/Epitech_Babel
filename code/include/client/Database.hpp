@@ -12,7 +12,7 @@
 #include <vector>
 #include <QtNetwork/QTcpSocket>
 #include <QtWidgets/QtWidgets>
-#include "Contact.hpp"
+#include "code/include/Contact.hpp"
 
 class Database : public QWidget
 {
@@ -26,12 +26,14 @@ Q_OBJECT
         void onDataReceived();
         void onServerClosed();
 
+    signals:
+        void dbUpdateEvt(const std::vector<Contact> &);
+
     public:
         explicit Database(const std::string &ip, const int &port, QWidget *parent);
         ~Database();
 
         void connect();
-        std::vector<Contact *> getContactList();
 };
 
 #endif

@@ -10,7 +10,7 @@
 
 #include <QtNetwork/QUdpSocket>
 #include <QtWidgets/QWidget>
-#include "Contact.hpp"
+#include "code/include/Contact.hpp"
 
 class Window;
 class QtCallSection;
@@ -22,16 +22,16 @@ class CallManager : public QWidget
         Window *_window;
         QtCallSection *_section;
         QUdpSocket *_socket;
-        Contact *_inCall;
+        Contact _inCall;
 
 	public:
 		CallManager(Window *window, const std::string &myIp, int socketPort);
 		~CallManager();
 
-		void receiveCall(Contact *contact);
+		void receiveCall(const Contact &contact);
 
 public slots:
-    void startCall(Contact *contact);
+    void startCall(const Contact &contact);
     void confirmCall();
     void stopCall();
     void onDataReceived();

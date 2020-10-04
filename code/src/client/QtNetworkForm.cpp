@@ -58,7 +58,6 @@ QString QtNetworkForm::getIPV4() const
     
     for (auto& addr : list)
     {
-        std::cout << addr.toString().toUtf8().constData() << " " << addr.protocol() << std::endl;
         if (addr.protocol() == QAbstractSocket::NetworkLayerProtocol::IPv4Protocol)
             return addr.toString();
     }

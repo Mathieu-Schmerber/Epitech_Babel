@@ -26,7 +26,7 @@ Core::~Core()
 
 void Core::initialize()
 {
-    std::vector<Contact *> contactList;
+    std::vector<Contact> contactList;
     std::string title;
     std::string ip;
 
@@ -39,8 +39,8 @@ void Core::initialize()
     this->_database = new Database(_networkForm->getSrvIp(), _networkForm->getSrvPort(), this->_window);
     title = _networkForm->getMyName() + " " +  ip + ":" + std::to_string(_networkForm->getMyPort());
     this->_window->setWindowTitle(title.c_str());
-    contactList = this->_database->getContactList();
-    this->_window->getContactList()->pushContacts(contactList);
+    this->_window->getContactList()->bindDatabase(_database);
+    this->_database->connect();
     this->_window->display();
     this->_app->exec();
 }

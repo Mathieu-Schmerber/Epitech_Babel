@@ -5,6 +5,7 @@
 ** lucas mascaut
 */
 
+#include "TcpQuery.hpp"
 #include "async_handler.hpp"
 
 async_handler::async_handler(boost::asio::io_service& io_service) : _socket(io_service)
@@ -29,9 +30,12 @@ async_handler::async_handler(boost::asio::io_service& io_service) : _socket(io_s
                     shared_from_this(),
                     boost::asio::placeholders::error,
                     boost::asio::placeholders::bytes_transferred));
+     auto query = TcpQuery(TcpQuery::QueryType::CLIENT_LIST);
+     query.addLine(Contact("127.0.0.1", "name4242", 4242));
+     query.addLine(Contact("127.0.0.1", "name4343", 4343));
 
     _socket.async_write_some(
-        boost::asio::buffer(msg, max_length),
+        boost::asio::buffer(TcpSerializeQuery(query)),
         boost::bind(&async_handler::handle_write,
                     shared_from_this(),
                     boost::asio::placeholders::error,

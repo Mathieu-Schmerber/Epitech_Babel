@@ -51,13 +51,15 @@ set(SERVER_HEADERS
         code/include/server/async_handler.hpp
         code/include/TcpQuery.hpp
         code/include/Contact.hpp
-        code/include/server/server.hpp)
+        code/include/server/server.hpp
+        code/include/server/databse.hpp)
 
 set(SERVER_SOURCES
         code/src/server/server.cpp
         code/src/TcpQuery.cpp
         code/src/Contact.cpp
-        code/src/server/async_handler.cpp)
+        code/src/server/async_handler.cpp
+        code/src/server/database.cpp)
 
 set(CLIENT_HEADERS
         code/include/client/Core.hpp

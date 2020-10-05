@@ -28,7 +28,6 @@ class Opus
         OpusEncoder* _encoder;
         OpusDecoder* _decoder;
         uint32_t _sampleRate;
-        opus_int32 _sampleSize;
         uint32_t _bufferSize;
         int _channels;
 
@@ -40,8 +39,8 @@ class Opus
         ~Opus();
         void InitEncoder();
         void InitDecoder();
-        string Encode(vector<uint16_t> data);
-        vector<uint16_t> Decode(string encodedData);
+        std::vector<uint16_t> Encode(vector<uint16_t> data);
+        std::vector<uint16_t> Decode(std::vector<uint16_t> encodedData);
         void DestroyEncoder();
         void DestroyDecoder();
 };

@@ -33,7 +33,6 @@ void Opus::InitEncoder()
     if (_error != OPUS_OK) {
         std::cout << "opus_encoder_create failed: " << _error << "\n";
     }
-    opus_encoder_ctl(_encoder, OPUS_GET_BANDWIDTH(&_sampleSize));
 }
 
 void Opus::InitDecoder()
@@ -44,20 +43,19 @@ void Opus::InitDecoder()
     }
 }
 
-string Opus::Encode(vector<uint16_t> data)
+std::vector<uint16_t> Opus::Encode(vector<uint16_t> data)
 {
-    unsigned char *encodedData = (unsigned char *)malloc(_sampleSize);
+    std::vector<uint16_t> encodedData(data.size());
 
-    opus_encode(_encoder, reinterpret_cast<opus_int16 const*>(data.data()), _bufferSize, encodedData, _sampleSize);
-    string sample(encodedData);
-    return (sample);
+    opus_encode(_encoder, reinterpret_cast<opus_int16 const*>(data.data()), data.size(), reinterpret_cast<unsigned char *>(encodedData.data()), data.size());
+    return (encodedData);
 }
 
-vector<uint16_t> Opus::Decode(string encodedData)
+vector<uint16_t> Opus::Decode(std::vector<uint16_t> encodedData)
 {
-    vector<uint16_t> decodedData;
+    vector<uint16_t> decodedData(encodedData.size());
 
-    opus_decode(_decoder, encodedData.c_str(), _sampleSize, reinterpret_cast<opus_int16 *>(decodedData.data()), _bufferSize, 0);
+    opus_decode(_decoder, reinterpret_cast<unsigned char *>(encodedData.data()), encodedData.size(), reinterpret_cast<opus_int16 *>(decodedData.data()), encodedData.size(), 0);
     return (decodedData);
 }
 

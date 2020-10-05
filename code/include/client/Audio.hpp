@@ -8,80 +8,38 @@
 #ifndef CPP_Audio_HPP
 #define CPP_Audio_HPP
 
+#include <vector>
 #include <cstdio>
 #include <cmath>
 #include <iostream>
+#include <cstdlib>
+#include <cstring>
 #include "portaudio.h"
 #include "Opus.hpp"
 
-typedef float SAMPLE;
-
-#define SAMPLE_RATE         (44100)
-#define PA_SAMPLE_TYPE      paInt32
-#define FRAMES_PER_BUFFER   (480)
-#define NUM_SECONDS     (5)
-#define NUM_CHANNELS        (2)
-#define SAMPLE_SILENCE  (0)
-#define DITHER_FLAG     (0) 
-
 using namespace std;
-
-typedef struct
-{
-    int          frameIndex;  /* Index into sample array. */
-    int          maxFrameIndex;
-    SAMPLE      *recordedSamples;
-} paTestData;
 
 class Audio
 {
     private:
-        PaStreamParameters inputParameters;
-        PaStreamParameters outputParameters;
-        PaStream *inStream;
-        PaStream *outStream;
-        PaError error;
-        SAMPLE *inputSample;
-        SAMPLE *outputSample;
-        paTestData data;
-        int                 totalFrames;
-        int                 numSamples;
-        int                 numBytes;
-        SAMPLE              max, val;
+        uint32_t _sampleRate;
+        uint32_t _bufferSize;
+        uint32_t _channelNb;
+        PaError _error;
+        PaStream *_stream;
 
-        static int PlayCallback(const void *inputBuffer, void *outputBuffer,
-                            unsigned long framesPerBuffer,
-                            const PaStreamCallbackTimeInfo* timeInfo,
-                            PaStreamCallbackFlags statusFlags,
-                            void *userData);
-
-        static int RecordCallback(const void *inputBuffer, void *outputBuffer,
-                            unsigned long framesPerBuffer,
-                            const PaStreamCallbackTimeInfo* timeInfo,
-                            PaStreamCallbackFlags statusFlags,
-                            void *userData);                
-        bool Error();
+        void Error(string errorMessage);
+        void Error();
 
     public:
         Audio();
         ~Audio();
-        bool InitAudio();
-        bool InitInput();
-        bool InitOutput();
-        bool AllocSample();
-        SAMPLE *GetInputSample();
-        SAMPLE *GetOutputSample();
-        void RecordAudio();
-        void PlayAudio();
-        void SetOutputSample(SAMPLE *sample);
-        bool OpenInStream();
-        bool OpenOutStream();
-        bool StartInStream();
-        bool StartOutStream();
-        bool ReadStream();
-        bool WriteStream();
-        bool CloseInStream();
-        bool CloseOutStream();
+        void OpenStream();
+        void StartStream();
+        vector<uint16_t> ReadStream();
+        void WriteStream(vector<uint16_t> sample);
+        void StopStream();
+        void CloseStream();
         void Terminate();
 };
 

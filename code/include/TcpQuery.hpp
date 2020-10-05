@@ -39,7 +39,7 @@ class TcpQuery
 };
 
 std::string TcpSerializeQuery(const TcpQuery &query);
-TcpQuery TcpDeserializeQuery(std::string query);
+TcpQuery TcpDeserializeQuery(const std::string &query);
 
 BOOST_CLASS_VERSION(TcpQuery, 2)
 

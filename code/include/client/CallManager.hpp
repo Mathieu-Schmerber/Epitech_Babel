@@ -23,9 +23,12 @@ class CallManager : public QWidget
         QtCallSection *_section;
         QUdpSocket *_socket;
         Contact _inCall;
+        Contact _me;
+
+        void handleQueries(const std::string &query);
 
 	public:
-		CallManager(Window *window, const std::string &myIp, int socketPort);
+		CallManager(Window *window, const Contact &me);
 		~CallManager();
 
 		void receiveCall(const Contact &contact);

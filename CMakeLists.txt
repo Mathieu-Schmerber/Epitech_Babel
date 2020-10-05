@@ -71,7 +71,7 @@ set(CLIENT_HEADERS
         code/include/client/QtCallSection.hpp
         code/include/client/CallManager.hpp
         code/include/client/QtNetworkForm.hpp
-        code/include/client/AudioPacket.hpp
+        code/include/client/UdpQuery.hpp
         code/include/TcpQuery.hpp
         code/include/Contact.hpp)
 
@@ -84,7 +84,7 @@ set(CLIENT_SOURCES
         code/src/client/CallManager.cpp
         code/src/client/QtNetworkForm.cpp
         code/src/client/main.cpp
-        code/src/client/AudioPacket.cpp
+        code/src/client/UdpQuery.cpp
         code/src/TcpQuery.cpp
         code/src/Contact.cpp)
 

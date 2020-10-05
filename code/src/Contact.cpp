@@ -24,3 +24,15 @@ int Contact::getPort() const
 {
     return this->_port;
 }
+
+void Contact::setIp(const std::string &ip) {
+    _ip = ip;
+}
+
+void Contact::setName(const std::string &name) {
+    _name = name;
+}
+
+void Contact::setPort(int port) {
+    _port = port;
+}

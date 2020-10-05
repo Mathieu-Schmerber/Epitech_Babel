@@ -24,7 +24,14 @@ class Contact
         Contact(const std::string &ip = "null",
                 const std::string &name = "null",
                 int port = -1);
-        ~Contact() = default;
+
+    void setIp(const std::string &ip);
+
+    void setName(const std::string &name);
+
+    void setPort(int port);
+
+    ~Contact() = default;
 
     template<class Archive>
     void serialize(Archive& ar, const unsigned int version){

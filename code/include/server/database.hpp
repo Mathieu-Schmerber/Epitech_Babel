@@ -9,6 +9,7 @@
 #define DATABASE_HPP_
 
 #include <sqlite3.h>
+#include <iostream>
 
 class database
 {

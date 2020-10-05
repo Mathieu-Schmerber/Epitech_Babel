@@ -52,7 +52,7 @@ set(SERVER_HEADERS
         code/include/TcpQuery.hpp
         code/include/Contact.hpp
         code/include/server/server.hpp
-        //code/include/server/databse.hpp
+        code/include/server/database.hpp
         )
 
 set(SERVER_SOURCES
@@ -60,7 +60,7 @@ set(SERVER_SOURCES
         code/src/TcpQuery.cpp
         code/src/Contact.cpp
         code/src/server/async_handler.cpp
-        //code/src/server/database.cpp
+        code/src/server/database.cpp
         )
 
 set(CLIENT_HEADERS

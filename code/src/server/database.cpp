@@ -15,13 +15,16 @@ database::database()
         std::cout << "DataBase Error: " << sqlite3_errmsg(db) << std::endl;
         sqlite3_close(db);
     }
-    sql = "CREATE TABLE PEOPLE ("  \
-      "ID INT PRIMARY KEY     NOT NULL," \
-      "NAME           TEXT    NOT NULL);";
+    sql = "CREATE TABLE CONTACT ("  \
+      "ID             INT PRIMARY KEY     NOT NULL," \
+      "IP             VARCHAR(30)         NOT NULL," \
+      "PORT           VARCHAR(10)         NOT NULL," \
+      "NAME           TEXT                NOT NULL);";
 
     rc = sqlite3_exec(db, sql.c_str(), callback, 0, &error);
     if( rc != SQLITE_OK ){
-      fprintf(stderr, "SQL error: %s\n", error);
+      if (rc != 1)
+        fprintf(stderr, "SQL error: %s\n", error);
       sqlite3_free(error);
     }
 }

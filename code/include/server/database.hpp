@@ -17,7 +17,7 @@ class database
         database();
         ~database();
 
-        int callback(void *not_used, int ac, char **av, char **azColName);
+        static int callback(void *not_used, int ac, char **av, char **azColName);
     private:
         sqlite3 *db;
         int rc;

@@ -60,18 +60,18 @@ set(SERVER_SOURCES
         code/src/server/async_handler.cpp)
 
 set(CLIENT_HEADERS
-        code/include/Contact.hpp
         code/include/client/Core.hpp
         code/include/client/Database.hpp
         code/include/client/Window.hpp
         code/include/client/QtContactList.hpp
         code/include/client/QtCallSection.hpp
         code/include/client/CallManager.hpp
+        code/include/client/QtNetworkForm.hpp
+        code/src/client/AudioPacket.hpp
         code/include/TcpQuery.hpp
-        code/include/client/QtNetworkForm.hpp)
+        code/include/Contact.hpp)
 
 set(CLIENT_SOURCES
-        code/src/Contact.cpp
         code/src/client/Core.cpp
         code/src/client/Database.cpp
         code/src/client/Window.cpp
@@ -79,8 +79,10 @@ set(CLIENT_SOURCES
         code/src/client/QtCallSection.cpp
         code/src/client/CallManager.cpp
         code/src/client/QtNetworkForm.cpp
+        code/src/client/main.cpp
+        code/src/client/AudioPacket.cpp
         code/src/TcpQuery.cpp
-        code/src/client/main.cpp)
+        code/src/Contact.cpp)
 
 add_executable(babel_client
         ${CLIENT_HEADERS}

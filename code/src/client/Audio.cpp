@@ -1,8 +1,5 @@
-#include <cstdio>
 #include "Audio.hpp"
 #include "portaudio.h"
-#include <unistd.h>
-
 
 Audio::Audio()
 {
@@ -67,10 +64,8 @@ void Audio::StartStream()
 
 vector<uint16_t> Audio::ReadStream()
 {
-    printf("ReadStream\n"); fflush(stdout);
     vector<uint16_t> res(_bufferSize);
     long readAvailable = Pa_GetStreamReadAvailable(_stream);
-    printf("%ld frame(s) vs Size: %ld\n", readAvailable, _bufferSize); fflush(stdout);
 
     if (readAvailable < (long)_bufferSize)
         _error = Pa_ReadStream(_stream, res.data(), (unsigned long)readAvailable);
@@ -107,4 +102,17 @@ void Audio::CloseStream()
 void Audio::Terminate()
 {
     Pa_Terminate();
+}
+
+const uint32_t Audio::getSampleRate()
+{
+    return _sampleRate;
+}
+const uint32_t Audio::getBufferSize()
+{
+    return _bufferSize;
+}
+const uint32_t Audio::getChannelNb()
+{
+    return _channelNb;
 }

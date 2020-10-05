@@ -6,54 +6,67 @@
 */
 
 #include "Opus.hpp"
+#include <unistd.h>
 
-Opus::Opus(){}
+Opus::Opus(uint32_t sampleRate, uint32_t bufferSize, int channels)
+{
+    _sampleRate = sampleRate;
+    _bufferSize = bufferSize;
+    _channels = channels;
+}
 
 Opus::~Opus(){}
 
-bool Opus::InitEncoder()
+void Opus::Error(string errorMessage)
 {
-    encoder = opus_encoder_create(SAMPLE_RATE, CHANNELS, OPUS_APPLICATION_AUDIO, &error);
-    if (error != OPUS_OK) {
-        std::cout << "opus_encoder_create failed: " << error << "\n";
-        return false;
+    exit(84);
+}
+
+void Opus::Error()
+{
+    exit(84);
+}
+
+void Opus::InitEncoder()
+{
+    _encoder = opus_encoder_create(_sampleRate, _channels, OPUS_APPLICATION_VOIP, &_error);
+    if (_error != OPUS_OK) {
+        std::cout << "opus_encoder_create failed: " << _error << "\n";
     }
-    opus_encoder_ctl(encoder, OPUS_GET_BANDWIDTH(&rate));
-    return true;
+    opus_encoder_ctl(_encoder, OPUS_GET_BANDWIDTH(&_sampleSize));
 }
 
-bool Opus::InitDecoder()
+void Opus::InitDecoder()
 {
-    decoder = opus_decoder_create(SAMPLE_RATE, CHANNELS, &error);
-    if (error != OPUS_OK) {
-        std::cout << "opus_encoder_create failed: " << error << "\n";
-        return false;
+    _decoder = opus_decoder_create(_sampleRate, _channels, &_error);
+    if (_error != OPUS_OK) {
+        std::cout << "opus_encoder_create failed: " << _error << "\n";
     }
-    return true;
 }
 
-unsigned char *Opus::Encode(SAMPLE *inputSample)
+string Opus::Encode(vector<uint16_t> data)
 {
-    unsigned char *encodedData;
+    unsigned char *encodedData = (unsigned char *)malloc(_sampleSize);
 
-    opus_encode(encoder, reinterpret_cast<opus_int16 const*>(inputSample), FRAMES_PER_BUFFER, encodedData, rate);
-    return (encodedData);
+    opus_encode(_encoder, reinterpret_cast<opus_int16 const*>(data.data()), _bufferSize, encodedData, _sampleSize);
+    string sample(encodedData);
+    return (sample);
 }
 
-SAMPLE *Opus::Decode(unsigned char *encodedData)
+vector<uint16_t> Opus::Decode(string encodedData)
 {
-    auto *decodedData = new (float[FRAMES_PER_BUFFER * CHANNELS]);
+    vector<uint16_t> decodedData;
 
-    opus_decode(decoder, encodedData, rate, reinterpret_cast<opus_int16 *>(decodedData), FRAMES_PER_BUFFER, 0);
+    opus_decode(_decoder, encodedData.c_str(), _sampleSize, reinterpret_cast<opus_int16 *>(decodedData.data()), _bufferSize, 0);
     return (decodedData);
 }
 
-bool Opus::DestroyEncoder()
+void Opus::DestroyEncoder()
 {
-    opus_encoder_destroy(encoder);
+    opus_encoder_destroy(_encoder);
 }
 
-bool Opus::DestroyDecoder()
+void Opus::DestroyDecoder()
 {
-    opus_decoder_destroy(decoder);
+    opus_decoder_destroy(_decoder);
 }

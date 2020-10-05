@@ -7,8 +7,10 @@
 
 #include "Audio.hpp"
 #include "Opus.hpp"
+#include <vector>
 #include <iostream>
 #include <unistd.h>
+#include <string>
 #include "Core.hpp"
 #include "Error.hpp"
 
@@ -50,17 +52,25 @@ int main(int ac, char **av)
         return error("Error: Invalid Arguments.");
     return setup(parser);*/
     Audio audio;
-    Opus opus;
-    unsigned char *encoded;
+    Opus opus(audio.getSampleRate(), audio.getBufferSize(), audio.getChannelNb());
 
-    write(1, "t po trua?\n", 10);
-    audio.InitAudio();
-    write(1, "t po trub?\n", 10);
-    while (true) {
-    write(1, "t po truc?\n", 10);
-        audio.RecordAudio();
-        audio.PlayAudio();
+    vector<uint16_t> test;
+    string sample;
+
+    audio.OpenStream();
+    audio.StartStream();
+    opus.InitDecoder();
+    opus.InitEncoder();
+    printf("Wire on. Will run %d seconds.\n", 4); fflush(stdout);
+    for (size_t i = 0; i < (4 * 48000)/480; i++) {
+        test = audio.ReadStream();
+        printf("1\n"); fflush(stdout);
+        sample = opus.Encode(test);
+        printf("2\n"); fflush(stdout);
+        test = opus.Decode(sample);
+        audio.WriteStream(test);
     }
+    printf("Wire off.\n"); fflush(stdout);
     return (0);
 }
 

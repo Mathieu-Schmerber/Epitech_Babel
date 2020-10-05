@@ -41,6 +41,10 @@ class Audio
         void StopStream();
         void CloseStream();
         void Terminate();
+
+        const uint32_t getSampleRate();
+        const uint32_t getBufferSize();
+        const uint32_t getChannelNb();
 };
 
 #endif

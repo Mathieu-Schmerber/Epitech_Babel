@@ -52,14 +52,16 @@ set(SERVER_HEADERS
         code/include/TcpQuery.hpp
         code/include/Contact.hpp
         code/include/server/server.hpp
-        code/include/server/databse.hpp)
+        //code/include/server/databse.hpp
+        )
 
 set(SERVER_SOURCES
         code/src/server/server.cpp
         code/src/TcpQuery.cpp
         code/src/Contact.cpp
         code/src/server/async_handler.cpp
-        code/src/server/database.cpp)
+        //code/src/server/database.cpp
+        )
 
 set(CLIENT_HEADERS
         code/include/client/Core.hpp
@@ -69,7 +71,7 @@ set(CLIENT_HEADERS
         code/include/client/QtCallSection.hpp
         code/include/client/CallManager.hpp
         code/include/client/QtNetworkForm.hpp
-        code/src/client/AudioPacket.hpp
+        code/include/client/AudioPacket.hpp
         code/include/TcpQuery.hpp
         code/include/Contact.hpp)
 

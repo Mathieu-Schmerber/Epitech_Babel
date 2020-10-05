@@ -13,7 +13,7 @@
 #include <boost/bind.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include "async_handler.hpp"
-#include "database.hpp"
+//#include "database.hpp"
 
 class server
 {
@@ -23,7 +23,7 @@ class server
         void handle_accept(boost::shared_ptr<async_handler> client, const boost::system::error_code& err);
     private:
         boost::asio::ip::tcp::acceptor _acceptor;
-        database *_db;
+        //database *_db;
 };
 
 #endif /* !SERVER_HPP_ */

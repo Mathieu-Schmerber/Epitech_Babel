@@ -5,7 +5,7 @@
 ** babel
 */
 
-#include "../../include/server/database.hpp"
+#include "database.hpp"
 
 database::database()
 {

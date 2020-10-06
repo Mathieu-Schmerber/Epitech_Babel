@@ -1,9 +1,11 @@
 *~
 build
 babel_client
-bable_server
+babel_server
+babel.db
 cmake-build-debug
 .idea
+.vs
 code/CMakeList.txt
 code/cmake-build-debug
 code/.idea

@@ -5,25 +5,54 @@
 ** Database
 */
 
+#include <iostream>
+#include "TcpQuery.hpp"
 #include "Database.hpp"
 #include "Error.hpp"
 
-Database::Database(const std::string &ip, const int &port)
-: _ip(ip), _port(port) {}
+Database::Database(const std::string &ip, const int &port, QWidget *parent)
+:  _ip(ip), _port(port), QWidget(parent)
+{
+    this->_socket = new QTcpSocket(this);
+    QObject::connect(_socket,SIGNAL(readyRead()),this,SLOT(onDataReceived()));
+    QObject::connect(_socket,SIGNAL(disconnected()),this,SLOT(onServerClosed()));
+}
+
+Database::~Database()
+{
+    if(this->_socket->isOpen())
+        this->_socket->close();
+}
 
 void Database::connect()
 {
-    printf("connecting to %s:%d...\n", this->_ip.c_str(), this->_port);
-    // throw ServerError("Connection failed.");
-    // Setup TCP connection between client and server
+    QString errorMsg;
+
+    this->_socket->abort();
+    this->_socket->connectToHost(QString(this->_ip.c_str()), this->_port);
+    if (!this->_socket->waitForConnected()) {
+        errorMsg = QString("%1.").arg(_socket->errorString());
+        QMessageBox::critical(this, "Database", errorMsg);
+        throw ServerError(errorMsg.toUtf8().constData());
+    }
 }
 
-std::vector<Contact *> Database::getContactList()
+void Database::onDataReceived()
 {
-    // Call server and receive list
-    std::vector<Contact *> tmp;
+    TcpQuery query(TcpQuery::QueryType::CLIENT_LIST);
+    std::string parsed;
+    auto senderSocket = dynamic_cast<QTcpSocket*>(sender());
 
-    for (int i = 0; i < 43; ++i)
-        tmp.push_back(new Contact("127.0.0.1", std::to_string(i)));
-    return tmp;
+    if (senderSocket) {
+        parsed = std::string(senderSocket->readAll().data());
+        emit dbUpdateEvt(TcpDeserializeQuery(parsed).getData());
+        std::cout << "[Info] the database has been updated." << std::endl;
+    }
+}
+
+void Database::onServerClosed()
+{
+    _socket->deleteLater();
+    _socket = nullptr;
+    QMessageBox::information(this,"Database", QString("Disconnected from server."));
 }

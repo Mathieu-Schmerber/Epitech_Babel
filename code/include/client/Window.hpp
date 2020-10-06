@@ -10,26 +10,39 @@
 
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QWidget>
-#include <QtWidgets/QPushButton>
 #include <vector>
 #include <string>
-
-#define COLUMN_MAX 5
+#include "QtContactList.hpp"
+#include "QtCallSection.hpp"
+#include "CallManager.hpp"
 
 class Window : public QWidget
 {
-	private:
-        std::pair<int, int> _size;
-        std::pair<int, int> _gridLimit;
-        std::vector<QPushButton *> _buttons;
+private:
+    std::pair<int, int> _size;
+    std::pair<int, int> _gridLimit;
+    QtContactList *_contactList;
+    QtCallSection *_callSection;
 
-        void layout();
+    // Events
+    void (CallManager::*_callHangupEvent)();
+    void (CallManager::*_callDeclinedEvent)();
+    void (CallManager::*_callAcceptedEvent)();
+    void (CallManager::*_callStartEvent)();
+
 public:
-		Window(const std::pair<int, int> &size, const std::string &title);
-		~Window();
+    Window(const std::pair<int, int> &size, const std::string &title);
+    ~Window();
 
-        void addButton(const std::string &content);
-        void display();
+    QtContactList *getContactList() const;
+    QtCallSection *getCallSection() const;
+
+    void display();
+
+    void setCallHangupEvent(void (CallManager::*callHangupEvent)());
+    void setCallDeclinedEvent(void (CallManager::*callDeclinedEvent)());
+    void setCallAcceptedEvent(void (CallManager::*callAcceptedEvent)());
+    void setCallStartEvent(void (CallManager::*callStartEvent)());
 };
 
 #endif

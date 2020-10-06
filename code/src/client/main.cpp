@@ -28,13 +28,13 @@ int usage(int returnValue)
     return returnValue;
 }
 
-int setup(ArgParser *parser)
+int setup(int ac, char **av)
 {
-    Core *core = new Core(parser);
+    Core *core = new Core(ac, av);
 
     try {
         core->initialize();
-    } catch(Error &err) { //TODO: Link custom error class
+    } catch(Error &err) {
         std::cerr << "Error [" << err.getType() << "]: " << err.getMessage()
                   << std::endl;
         return 84;
@@ -44,6 +44,7 @@ int setup(ArgParser *parser)
 
 int main(int ac, char **av)
 {
+<<<<<<< HEAD
     /*auto *parser = new ArgParser(&ac, av);
 
     if (parser->isUsage())
@@ -70,5 +71,10 @@ int main(int ac, char **av)
     }
     printf("Wire off.\n"); fflush(stdout);
     return (0);
+=======
+    if (ac == 2 && std::string(av[1]) == "-h")
+        return usage(0);
+    return setup(ac, av);
+>>>>>>> master
 }
 

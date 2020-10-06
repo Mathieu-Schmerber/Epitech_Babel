@@ -1,7 +1,7 @@
 ## Installation
 
 This project uses **conan**.
-To install conan, checout **conan documentation**: https://docs.conan.io/en/1.7/installation.html
+To install conan, checout [conan documentation](https://docs.conan.io/en/1.7/installation.html)
 or install it with **pip**:
 >$ pip install conan
 
@@ -12,6 +12,7 @@ Then you need 3 remotes:
 
 You can install those by running the following commands:
 >$ conan remote add epitech https://api.bintray.com/conan/epitech/public-conan
+
 >$ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
 
 You can now compile the **Babel project**
@@ -23,6 +24,7 @@ You can launch the **install_linux.sh** script:
 ### Windows compilation
 You have to execute those commands:
 >$ mkdir build && cd build && conan install --build=missing -s build_type=Debug .. && cmake ..
+
 >$ cmake --build .
 
 ### Run the project

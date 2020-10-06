@@ -24,6 +24,7 @@ You can launch the **install_linux.sh** script:
 ### Windows compilation
 You have to execute those commands:
 >$ mkdir build && cd build && conan install --build=missing -s build_type=Debug .. && cmake ..
+
 >$ cmake --build .
 
 ### Run the project

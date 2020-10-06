@@ -1,7 +1,7 @@
 ## Installation
 
 This project uses **conan**.
-To install conan, checout [conan documentation](https://docs.conan.io/en/1.7/installation.html)
+To install conan, checkout [conan documentation](https://docs.conan.io/en/1.7/installation.html)
 or install it with **pip**:
 >$ pip install conan
 

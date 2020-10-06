@@ -8,6 +8,7 @@
 #include <QtWidgets/QApplication>
 #include "QtContactList.hpp"
 #include "code/include/Contact.hpp"
+#include "QtStyle.hpp"
 
 QtContactList::QtContactList(QWidget *parent, int w, int h) : QWidget(parent)
 {
@@ -20,7 +21,7 @@ QtContactList::QtContactList(QWidget *parent, int w, int h) : QWidget(parent)
     this->_scroll->setWidget(this->_container);
     this->_scroll->resize(w, h);
     this->_mapper = new QSignalMapper();
-    this->_container->setStyleSheet("background: #DAE0FF");
+    this->_container->setStyleSheet("background: #3e4349");
 }
 
 QtContactList::~QtContactList()
@@ -40,7 +41,7 @@ void QtContactList::addContactButton(const std::string &name, size_t index)
     const std::pair<int, int> btnSize = {200, 50};
     auto *btn = new QPushButton(name.c_str(), this->_container);
 
-    btn->setStyleSheet("text-align:left; background: #DAE0FF;");
+    btn->setStyleSheet(QtStyle::buttonStyle);
     btn->setIcon(QIcon(QCoreApplication::applicationDirPath() + "/phone.png"));
     btn->setIconSize(QSize(btnSize.second * 0.75, btnSize.second * 0.75));
     btn->setFixedSize(btnSize.first, btnSize.second);

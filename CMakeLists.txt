@@ -39,7 +39,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5Network CONFIG REQUIRED)
-find_package(Boost 1.69.0 COMPONENTS REQUIRED)
+find_package(Boost 1.69.0 COMPONENTS REQUIRED serialization)
 
 include_directories(${Boost_INCLUDE_DIRS}) 
 include_directories(${CMAKE_INCLUDE_PATH})
@@ -72,6 +72,7 @@ set(CLIENT_HEADERS
         code/include/client/CallManager.hpp
         code/include/client/QtNetworkForm.hpp
         code/include/client/UdpQuery.hpp
+        code/include/client/QtStyle.hpp
         code/include/TcpQuery.hpp
         code/include/Contact.hpp)
 

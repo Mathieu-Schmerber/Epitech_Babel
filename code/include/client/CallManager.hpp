@@ -13,30 +13,42 @@
 #include "code/include/Contact.hpp"
 
 class Window;
+
 class QtCallSection;
 
 class CallManager : public QWidget
 {
-    Q_OBJECT
-	private:
-        Window *_window;
-        QtCallSection *_section;
-        QUdpSocket *_socket;
-        Contact _inCall;
-        Contact _me;
+Q_OBJECT
+public:
+    enum State { // TODO: actions depending on states
+        NONE,
+        WAITING_FOR_RESPONSE,
+        RECEIVING_CALL,
+        IN_CALL
+    };
 
-        void handleQueries(const std::string &query);
+    CallManager(Window *window, const Contact &me);
+    ~CallManager();
 
-	public:
-		CallManager(Window *window, const Contact &me);
-		~CallManager();
+private:
+    Window *_window;
+    QtCallSection *_section;
+    QUdpSocket *_socket;
+    Contact _inCall;
+    Contact _requestingCall;
+    Contact _waitingForResponse;
+    Contact _me;
+    State _state;
 
-		void receiveCall(const Contact &contact);
+    void receiveStartCall(const Contact &sender);
+    void receiveConfirmCall(const Contact &sender);
+    void receiveStopCall(const Contact &sender);
+    void handleQueries(const std::string &query);
 
 public slots:
-    void startCall(const Contact &contact);
-    void confirmCall();
-    void stopCall();
+    void sendStartCall(const Contact &contact);
+    void sendConfirmCall();
+    void sendStopCall();
     void onDataReceived();
 };
 

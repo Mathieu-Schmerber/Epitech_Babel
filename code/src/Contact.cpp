@@ -36,3 +36,13 @@ void Contact::setName(const std::string &name) {
 void Contact::setPort(int port) {
     _port = port;
 }
+
+bool Contact::operator==(const Contact &rhs) const {
+    return _ip == rhs._ip &&
+           _name == rhs._name &&
+           _port == rhs._port;
+}
+
+bool operator!=(const Contact &lhs, const Contact &rhs) {
+    return !(rhs == lhs);
+}

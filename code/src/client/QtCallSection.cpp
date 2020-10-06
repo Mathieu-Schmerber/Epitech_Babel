@@ -15,7 +15,7 @@ QtCallSection::QtCallSection(QWidget *parent) : QWidget(parent)
     this->_infoTxt = this->createText("", 15, true);
     this->_hangupBtn = this->createBtn("/hangup.png", QSize(130, 130));
     this->_acceptBtn = this->createBtn("/accept.png", QSize(100, 100));
-    this->setState(NO_CALL);
+    this->setState(CallManager::NONE);
 }
 
 QtCallSection::~QtCallSection() {}
@@ -42,11 +42,6 @@ QPushButton * QtCallSection::createBtn(const std::string &resource, QSize size)
     return res;
 }
 
-QtCallSection::State QtCallSection::getState() const
-{
-    return this->_state;
-}
-
 void QtCallSection::setBackgroundColor(const QColor &color)
 {
     QPalette pal = palette();
@@ -58,7 +53,7 @@ void QtCallSection::setBackgroundColor(const QColor &color)
 
 void QtCallSection::noCallState()
 {
-    this->setBackgroundColor(Qt::black);
+    this->setBackgroundColor(QColor(36, 59, 77));
     this->_infoTxt->setVisible(false);
     this->_stateTxt->setVisible(false);
     this->_hangupBtn->setEnabled(false);
@@ -107,9 +102,8 @@ void QtCallSection::inCallState(const Contact &contact)
     connect(_hangupBtn, SIGNAL(clicked()), this, SLOT(hangup()));
 }
 
-void QtCallSection::setState(State state, const Contact &contact)
+void QtCallSection::setState(CallManager::State state, const Contact &contact)
 {
-    this->_state = state;
     this->_hangupBtn->setEnabled(true);
     this->_hangupBtn->setVisible(true);
     this->_acceptBtn->setEnabled(false);
@@ -117,16 +111,16 @@ void QtCallSection::setState(State state, const Contact &contact)
     this->_infoTxt->setVisible(true);
     this->_stateTxt->setVisible(true);
     switch (state) {
-        case NO_CALL:
+        case CallManager::State::NONE:
             this->noCallState();
             break;
-        case CALLING:
+        case CallManager::State::WAITING_FOR_RESPONSE:
             this->callingState(contact);
             break;
-        case GETTING_CALL:
+        case CallManager::State::RECEIVING_CALL:
             this->gettingCallState(contact);
             break;
-        case IN_CALL:
+        case CallManager::State::IN_CALL:
             this->inCallState(contact);
             break;
     }

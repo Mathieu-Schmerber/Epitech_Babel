@@ -11,21 +11,14 @@
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QLabel>
-#include "code/include/Contact.hpp"
+#include "Contact.hpp"
+#include "CallManager.hpp"
 
 class QtCallSection : public QWidget
 {
     Q_OBJECT
-    public:
-        enum State {
-            NO_CALL,
-            CALLING,
-            GETTING_CALL,
-            IN_CALL
-        };
 
 	private:
-        State _state;
         QLabel *_stateTxt;
         QLabel *_infoTxt;
         QPushButton *_hangupBtn;
@@ -53,8 +46,7 @@ private slots:
 		QtCallSection(QWidget *parent);
 		~QtCallSection();
 
-		void setState(State state, const Contact &contact = Contact());
-		State getState() const;
+		void setState(CallManager::State state, const Contact &contact = Contact());
 		void display();
 };
 

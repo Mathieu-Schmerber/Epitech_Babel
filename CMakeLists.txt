@@ -79,6 +79,9 @@ set(CLIENT_HEADERS
 set(CLIENT_SOURCES
         code/src/client/Core.cpp
         code/src/client/Database.cpp
+        code/src/client/main.cpp
+        code/src/client/Audio.cpp
+        code/src/client/Opus.cpp
         code/src/client/Window.cpp
         code/src/client/QtContactList.cpp
         code/src/client/QtCallSection.cpp
@@ -93,6 +96,17 @@ add_executable(babel_client
         ${CLIENT_HEADERS}
         ${CLIENT_SOURCES})
 
+<<<<<<< HEAD
+
+target_link_libraries(babel_client ${CONAN_LIBS} Qt5::Widgets)
+target_link_libraries(babel_client opus)
+if (WIN32)
+    target_link_libraries(babel_client portaudio_x64)
+else()
+    target_link_libraries(babel_client portaudio)
+    target_link_libraries(babel_client dl)
+endif()
+=======
 add_executable(babel_server
         ${SERVER_HEADERS}
         ${SERVER_SOURCES})
@@ -104,3 +118,4 @@ add_custom_command(TARGET babel_client POST_BUILD
 target_link_libraries(babel_client ${CONAN_LIBS} Qt5::Widgets Qt5::Network)
 target_link_libraries(babel_server ${CONAN_LIBS})
 target_link_libraries(babel_server ${Boost_LIBRARIES})
+>>>>>>> master

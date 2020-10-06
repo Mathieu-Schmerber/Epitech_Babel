@@ -1,7 +1,7 @@
 ## Installation
 
 This project uses **conan**.
-To install conan, checout [conan documentation](https://docs.conan.io/en/1.7/installation.html)
+To install conan, checkout [conan documentation](https://docs.conan.io/en/1.7/installation.html)
 or install it with **pip**:
 >$ pip install conan
 
@@ -35,5 +35,5 @@ And then run the clients
 >$ ./build/bin/babel_client
 
 ## Babel resources
-[Babel client diagram](https://lucid.app/invitations/accept/674e3b0a-3dca-41e0-b05e-c38f4e62d73f)
+[Babel client diagram](https://github.com/EpitechIT2020/B-CPP-500-LIL-5-1-babel-thomas.crombez/blob/master/doc/babel_UML.pdf)
 

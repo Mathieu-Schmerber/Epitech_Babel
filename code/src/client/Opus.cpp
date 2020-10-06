@@ -13,6 +13,8 @@ Opus::Opus(uint32_t sampleRate, uint32_t bufferSize, int channels)
     _sampleRate = sampleRate;
     _bufferSize = bufferSize;
     _channels = channels;
+    this->InitEncoder();
+    this->InitDecoder();
 }
 
 Opus::~Opus(){}

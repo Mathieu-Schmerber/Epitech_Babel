@@ -44,37 +44,8 @@ int setup(int ac, char **av)
 
 int main(int ac, char **av)
 {
-<<<<<<< HEAD
-    /*auto *parser = new ArgParser(&ac, av);
-
-    if (parser->isUsage())
-        return usage(0);
-    else if (!parser->isValid())
-        return error("Error: Invalid Arguments.");
-    return setup(parser);*/
-    Audio audio;
-    Opus opus(audio.getSampleRate(), audio.getBufferSize(), audio.getChannelNb());
-
-    vector<uint16_t> test;
-    vector<uint16_t> sample;
-
-    audio.OpenStream();
-    audio.StartStream();
-    opus.InitDecoder();
-    opus.InitEncoder();
-    printf("Wire on. Will run %d seconds.\n", 4); fflush(stdout);
-    for (size_t i = 0; i < (4 * 48000)/480; i++) {
-        test = audio.ReadStream();
-        sample = opus.Encode(test);
-        test = opus.Decode(sample);
-        audio.WriteStream(test);
-    }
-    printf("Wire off.\n"); fflush(stdout);
-    return (0);
-=======
     if (ac == 2 && std::string(av[1]) == "-h")
         return usage(0);
     return setup(ac, av);
->>>>>>> master
 }
 

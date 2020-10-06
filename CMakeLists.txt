@@ -74,7 +74,9 @@ set(CLIENT_HEADERS
         code/include/client/UdpQuery.hpp
         code/include/client/QtStyle.hpp
         code/include/TcpQuery.hpp
-        code/include/Contact.hpp)
+        code/include/Contact.hpp
+        code/include/client/Opus.hpp
+        code/include/client/Audio.hpp)
 
 set(CLIENT_SOURCES
         code/src/client/Core.cpp
@@ -90,23 +92,21 @@ set(CLIENT_SOURCES
         code/src/client/main.cpp
         code/src/client/UdpQuery.cpp
         code/src/TcpQuery.cpp
-        code/src/Contact.cpp)
+        code/src/Contact.cpp
+        code/src/client/Opus.cpp
+        code/src/client/Audio.cpp)
 
 add_executable(babel_client
         ${CLIENT_HEADERS}
         ${CLIENT_SOURCES})
 
-<<<<<<< HEAD
-
-target_link_libraries(babel_client ${CONAN_LIBS} Qt5::Widgets)
-target_link_libraries(babel_client opus)
 if (WIN32)
     target_link_libraries(babel_client portaudio_x64)
 else()
     target_link_libraries(babel_client portaudio)
     target_link_libraries(babel_client dl)
 endif()
-=======
+
 add_executable(babel_server
         ${SERVER_HEADERS}
         ${SERVER_SOURCES})
@@ -115,7 +115,7 @@ add_custom_command(TARGET babel_client POST_BUILD
                    COMMAND ${CMAKE_COMMAND} -E copy_directory
                        ${CMAKE_SOURCE_DIR}/code/resources/ $<TARGET_FILE_DIR:babel_client>)
 
+target_link_libraries(babel_client opus)
 target_link_libraries(babel_client ${CONAN_LIBS} Qt5::Widgets Qt5::Network)
 target_link_libraries(babel_server ${CONAN_LIBS})
 target_link_libraries(babel_server ${Boost_LIBRARIES})
->>>>>>> master

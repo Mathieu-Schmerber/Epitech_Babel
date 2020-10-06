@@ -11,6 +11,8 @@ Audio::Audio()
     _error = Pa_Initialize();
     if (_error != paNoError)
         Error();
+    this->OpenStream();
+    this->StartStream();
 }
 
 Audio::~Audio()

@@ -127,7 +127,7 @@ void CallManager::handleQueries(const std::string &query)
             break;
         case UdpQuery::STOP_CALL:
             this->receiveStopCall(data.getSender());
-        default:
+        case UdpQuery::SEND_AUDIO:
             break;
     }
 }

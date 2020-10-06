@@ -55,7 +55,7 @@ int main(int ac, char **av)
     Opus opus(audio.getSampleRate(), audio.getBufferSize(), audio.getChannelNb());
 
     vector<uint16_t> test;
-    string sample;
+    vector<uint16_t> sample;
 
     audio.OpenStream();
     audio.StartStream();
@@ -64,9 +64,7 @@ int main(int ac, char **av)
     printf("Wire on. Will run %d seconds.\n", 4); fflush(stdout);
     for (size_t i = 0; i < (4 * 48000)/480; i++) {
         test = audio.ReadStream();
-        printf("1\n"); fflush(stdout);
         sample = opus.Encode(test);
-        printf("2\n"); fflush(stdout);
         test = opus.Decode(sample);
         audio.WriteStream(test);
     }

@@ -30,7 +30,6 @@ CallManager::CallManager(Window *window, const Contact &me) : QWidget(window)
     connect(_section, SIGNAL(hangupEvt()), this, SLOT(sendStopCall()));
     connect(_section, SIGNAL(acceptEvt()), this, SLOT(sendConfirmCall()));
     connect(window->getContactList(), SIGNAL(startEvt(const Contact &)), this, SLOT(sendStartCall(const Contact &)));
-    this->setupAudio();
 }
 
 CallManager::~CallManager()
@@ -38,6 +37,7 @@ CallManager::~CallManager()
     this->_socket->close();
 }
 
+//region "Sender"
 void CallManager::sendStartCall(const Contact &contact)
 {
     QByteArray data;
@@ -85,12 +85,15 @@ void CallManager::sendConfirmCall()
 
     this->_inCall = this->_requestingCall;
     this->_state = IN_CALL;
+    std::cout << "Confirm call" << std::endl;
     data.append(UdpSerializeQuery(UdpQuery(UdpQuery::CONFIRM_CALL, _me)).c_str());
     this->_socket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
     this->_section->setState(_state, _inCall);
-    this->sendRecord();
+    this->setupAudio();
 }
+//endregion
 
+//region "Receiver"
 void CallManager::receiveStartCall(const Contact &sender)
 {
     QByteArray data;
@@ -107,6 +110,8 @@ void CallManager::receiveConfirmCall(const Contact &sender)
     this->_state = IN_CALL;
     this->_inCall = sender;
     this->_section->setState(_state, sender);
+    this->setupAudio();
+    this->sendRecord();
 }
 
 void CallManager::receiveStopCall(const Contact &sender)
@@ -117,6 +122,7 @@ void CallManager::receiveStopCall(const Contact &sender)
     this->_state = NONE;
     this->_section->setState(_state);
 }
+//endregion
 
 void CallManager::handleQueries(const std::string &query)
 {
@@ -132,6 +138,7 @@ void CallManager::handleQueries(const std::string &query)
         case UdpQuery::STOP_CALL:
             this->receiveStopCall(data.getSender());
         case UdpQuery::SEND_AUDIO:
+            std::cout << "=================== > RECEIVING AUDIO QUERY" << std::endl;
             this->receiveRecord(data.getData());
             break;
     }
@@ -171,7 +178,7 @@ void CallManager::sendRecord()
     std::vector<uint16_t> rec;
     std::vector<uint16_t> sample;
 
-    while (this->_state == CallManager::IN_CALL) {
+    while (1) {
         rec = _audio->ReadStream();
         sample = _opus->Encode(rec);
         this->sendShortRecord(sample);

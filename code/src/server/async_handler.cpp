@@ -8,13 +8,13 @@
 #include "TcpQuery.hpp"
 #include "async_handler.hpp"
 
-async_handler::async_handler(boost::asio::io_service& io_service) : _socket(io_service)
+async_handler::async_handler(boost::asio::io_context& io_context) : _socket(io_context)
 {
 }
 
- boost::shared_ptr<async_handler> async_handler::create(boost::asio::io_service& io_service)
+ boost::shared_ptr<async_handler> async_handler::create(boost::asio::io_context& io_context)
  {
-     return boost::shared_ptr<async_handler>(new async_handler(io_service));
+     return boost::shared_ptr<async_handler>(new async_handler(io_context));
  }
 
  boost::asio::ip::tcp::socket& async_handler::get_socket()

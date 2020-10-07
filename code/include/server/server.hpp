@@ -18,7 +18,7 @@
 class server
 {
     public:
-        server(boost::asio::io_service& io_service);
+        server(boost::asio::io_context& io_context);
         void start_accept();
         void handle_accept(boost::shared_ptr<async_handler> client, const boost::system::error_code& err);
     private:

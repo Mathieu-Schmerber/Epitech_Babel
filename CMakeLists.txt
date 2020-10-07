@@ -39,7 +39,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5Network CONFIG REQUIRED)
-find_package(Boost 1.69.0 COMPONENTS REQUIRED)
+find_package(Boost 1.71.0 COMPONENTS REQUIRED)
 
 include_directories(${Boost_INCLUDE_DIRS}) 
 include_directories(${CMAKE_INCLUDE_PATH})

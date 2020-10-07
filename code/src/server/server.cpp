@@ -7,7 +7,7 @@
 
 #include "server.hpp"
 
-server::server(boost::asio::io_service& io_service) : _acceptor(io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 6666))
+server::server(boost::asio::io_context& io_context) : _acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 6666))
 {
     _db = new database;
     start_accept();
@@ -15,7 +15,10 @@ server::server(boost::asio::io_service& io_service) : _acceptor(io_service, boos
 
 void server::start_accept()
 {
-    boost::shared_ptr<async_handler> client = async_handler::create(_acceptor.get_io_service());
+    boost::asio::executor e = _acceptor.get_executor();
+    boost::asio::execution_context &e_context = e.context();
+    boost::asio::io_context &io_context = static_cast<boost::asio::io_context&>(e_context);
+    boost::shared_ptr<async_handler> client = async_handler::create(io_context);
     _acceptor.async_accept(client->get_socket(),
                             boost::bind(&server::handle_accept, this, client,
                             boost::asio::placeholders::error));
@@ -33,9 +36,9 @@ int main(int argc, char *argv[])
 {
   try
     {
-    boost::asio::io_service io_service;  
-    server server(io_service);
-    io_service.run();
+    boost::asio::io_context io_context;  
+    server server(io_context);
+    io_context.run();
     }
   catch(std::exception& e)
     {

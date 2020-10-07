@@ -156,19 +156,25 @@ void CallManager::setupAudio()
                            _audio->getChannelNb());
 }
 
+void CallManager::sendShortRecord(const std::vector<uint16_t> &record)
+{
+    UdpQuery query(UdpQuery::SEND_AUDIO, _me);
+    QByteArray data;
+
+    query.setData(record);
+    data.append(UdpSerializeQuery(query).c_str());
+    this->_socket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
+}
+
 void CallManager::sendRecord()
 {
-    QByteArray data;
-    UdpQuery query(UdpQuery::SEND_AUDIO, _me);
     std::vector<uint16_t> rec;
     std::vector<uint16_t> sample;
 
-    for (size_t i = 0; i < (4 * _audio->getSampleRate()) / _audio->getBufferSize(); ++i) {
+    while (this->_state == CallManager::IN_CALL) {
         rec = _audio->ReadStream();
         sample = _opus->Encode(rec);
-        query.setData(sample);
-        data.append(UdpSerializeQuery(query).c_str());
-        this->_socket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
+        this->sendShortRecord(sample);
     }
 }
 

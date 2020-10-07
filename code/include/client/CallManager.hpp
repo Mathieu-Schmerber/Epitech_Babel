@@ -54,6 +54,7 @@ private:
 
     void sendRecord();
     void receiveRecord(const std::vector<uint16_t> &record);
+    void sendShortRecord(const std::vector<uint16_t> &record);
 
 public slots:
     void sendStartCall(const Contact &contact);

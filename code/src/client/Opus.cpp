@@ -6,7 +6,6 @@
 */
 
 #include "Opus.hpp"
-#include <unistd.h>
 
 Opus::Opus(uint32_t sampleRate, uint32_t bufferSize, int channels)
 {
@@ -19,7 +18,7 @@ Opus::Opus(uint32_t sampleRate, uint32_t bufferSize, int channels)
 
 Opus::~Opus(){}
 
-void Opus::Error(string errorMessage)
+void Opus::Error(std::string errorMessage)
 {
     exit(84);
 }
@@ -45,7 +44,7 @@ void Opus::InitDecoder()
     }
 }
 
-std::vector<uint16_t> Opus::Encode(vector<uint16_t> data)
+std::vector<uint16_t> Opus::Encode(std::vector<uint16_t> data)
 {
     std::vector<uint16_t> encodedData(data.size());
 
@@ -53,9 +52,9 @@ std::vector<uint16_t> Opus::Encode(vector<uint16_t> data)
     return (encodedData);
 }
 
-vector<uint16_t> Opus::Decode(std::vector<uint16_t> encodedData)
+std::vector<uint16_t> Opus::Decode(std::vector<uint16_t> encodedData)
 {
-    vector<uint16_t> decodedData(encodedData.size());
+    std::vector<uint16_t> decodedData(encodedData.size());
 
     opus_decode(_decoder, reinterpret_cast<unsigned char *>(encodedData.data()), encodedData.size(), reinterpret_cast<opus_int16 *>(decodedData.data()), encodedData.size(), 0);
     return (decodedData);

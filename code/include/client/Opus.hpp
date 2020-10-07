@@ -13,13 +13,9 @@
 #include <vector>
 #include <string>
 
-typedef float SAMPLE;
-
 #define CHANNELS (2)
 #define FRAMES_PER_BUFFER   (1024)
 #define SAMPLE_RATE (48000)
-
-using namespace std;
 
 class Opus
 {
@@ -31,7 +27,7 @@ class Opus
         uint32_t _bufferSize;
         int _channels;
 
-        void Error(string errorMessage);
+        void Error(std::string errorMessage);
         void Error();
 
     public:
@@ -39,7 +35,7 @@ class Opus
         ~Opus();
         void InitEncoder();
         void InitDecoder();
-        std::vector<uint16_t> Encode(vector<uint16_t> data);
+        std::vector<uint16_t> Encode(std::vector<uint16_t> data);
         std::vector<uint16_t> Decode(std::vector<uint16_t> encodedData);
         void DestroyEncoder();
         void DestroyDecoder();

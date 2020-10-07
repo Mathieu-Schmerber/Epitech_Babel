@@ -11,18 +11,17 @@
 #include <sqlite3.h>
 #include <iostream>
 
-class database
+class SQLdatabase
 {
     public:
-        database();
-        ~database();
+        SQLdatabase();
+        ~SQLdatabase();
 
         static int callback(void *not_used, int ac, char **av, char **azColName);
     private:
         sqlite3 *db;
         int rc;
         char *error;
-
 };
 
 #endif /* !DATABASE_HPP_ */

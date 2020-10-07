@@ -5,9 +5,9 @@
 ** babel
 */
 
-#include "database.hpp"
+#include "SQLdatabase.hpp"
 
-database::database()
+SQLdatabase::SQLdatabase()
 {
     std::string sql;
     rc = sqlite3_open("babel.db",&db);
@@ -29,12 +29,12 @@ database::database()
     }
 }
 
-database::~database()
+SQLdatabase::~SQLdatabase()
 {
     sqlite3_close(db);
 }
 
-int database::callback(void *not_used, int ac, char **av, char **azColName)
+int SQLdatabase::callback(void *not_used, int ac, char **av, char **azColName)
 {
     return(0);
 }

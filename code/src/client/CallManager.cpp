@@ -22,7 +22,7 @@ CallManager::CallManager(Window *window, const Contact &me) : QWidget(window)
     this->_inCall = CONTACT_NULL;
     this->_requestingCall = CONTACT_NULL;
     this->_waitingForResponse = CONTACT_NULL;
-    this->_state = NONE;
+    this->_state = CallManager::NONE;
     this->_audio = nullptr;
     this->_opus = nullptr;
     this->_socket->bind(QHostAddress(me.getIp().c_str()), me.getPort());
@@ -85,11 +85,11 @@ void CallManager::sendConfirmCall()
 
     this->_inCall = this->_requestingCall;
     this->_state = IN_CALL;
-    std::cout << "Confirm call" << std::endl;
     data.append(UdpSerializeQuery(UdpQuery(UdpQuery::CONFIRM_CALL, _me)).c_str());
     this->_socket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
     this->_section->setState(_state, _inCall);
     this->setupAudio();
+    std::cout << "Setup audio on Confirm send" << std::endl;
 }
 //endregion
 
@@ -111,6 +111,7 @@ void CallManager::receiveConfirmCall(const Contact &sender)
     this->_inCall = sender;
     this->_section->setState(_state, sender);
     this->setupAudio();
+    std::cout << "Setup audio on Confirm receive" << std::endl;
     this->sendRecord();
 }
 
@@ -130,15 +131,19 @@ void CallManager::handleQueries(const std::string &query)
 
     switch (data.getType()) {
         case UdpQuery::START_CALL:
+            std::cout << "receive START_CALL" << std::endl;
             this->receiveStartCall(data.getSender());
             break;
         case UdpQuery::CONFIRM_CALL:
+            std::cout << "receive CONFIRM_CALL" << std::endl;
             this->receiveConfirmCall(data.getSender());
             break;
         case UdpQuery::STOP_CALL:
+            std::cout << "receive STOP_CALL" << std::endl;
             this->receiveStopCall(data.getSender());
+            break;
         case UdpQuery::SEND_AUDIO:
-            std::cout << "=================== > RECEIVING AUDIO QUERY" << std::endl;
+            std::cout << "receive SEND_AUDIO" << std::endl;
             this->receiveRecord(data.getData());
             break;
     }
@@ -171,6 +176,7 @@ void CallManager::sendShortRecord(const std::vector<uint16_t> &record)
     query.setData(record);
     data.append(UdpSerializeQuery(query).c_str());
     this->_socket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
+    std::cout << "Send audio to " << std::to_string(_inCall.getPort()) << std::endl;
 }
 
 void CallManager::sendRecord()
@@ -178,7 +184,7 @@ void CallManager::sendRecord()
     std::vector<uint16_t> rec;
     std::vector<uint16_t> sample;
 
-    while (1) {
+    while (this->_state == IN_CALL) {
         rec = _audio->ReadStream();
         sample = _opus->Encode(rec);
         this->sendShortRecord(sample);

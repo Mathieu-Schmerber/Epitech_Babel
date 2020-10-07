@@ -22,7 +22,7 @@ Audio::~Audio()
     Terminate();
 }
 
-void Audio::Error(string errorMessage)
+void Audio::Error(std::string errorMessage)
 {
     if (_stream)
         Pa_AbortStream(_stream);
@@ -64,9 +64,9 @@ void Audio::StartStream()
         Error();
 }
 
-vector<uint16_t> Audio::ReadStream()
+std::vector<uint16_t> Audio::ReadStream()
 {
-    vector<uint16_t> res(_bufferSize);
+    std::vector<uint16_t> res(_bufferSize);
     long readAvailable = Pa_GetStreamReadAvailable(_stream);
 
     if (readAvailable < (long)_bufferSize)
@@ -78,7 +78,7 @@ vector<uint16_t> Audio::ReadStream()
     return res;
 }
 
-void Audio::WriteStream(vector<uint16_t> sample)
+void Audio::WriteStream(std::vector<uint16_t> sample)
 {
     while (Pa_GetStreamWriteAvailable(_stream) < (long)sample.size());
     _error = Pa_WriteStream(_stream, sample.data(), (unsigned long)sample.size());

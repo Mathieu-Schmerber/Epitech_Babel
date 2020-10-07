@@ -31,8 +31,8 @@ async_handler::async_handler(boost::asio::io_context& io_context) : _socket(io_c
                     boost::asio::placeholders::error,
                     boost::asio::placeholders::bytes_transferred));
      auto query = TcpQuery(TcpQuery::QueryType::CLIENT_LIST);
-     query.addLine(Contact("127.0.0.1", "name4242", 4242));
-     query.addLine(Contact("127.0.0.1", "name4343", 4343));
+     query.addLine(Contact("10.26.113.25", "name4242", 4242));
+     query.addLine(Contact("10.26.113.25", "name4343", 4343));
 
     _socket.async_write_some(
         boost::asio::buffer(TcpSerializeQuery(query)),

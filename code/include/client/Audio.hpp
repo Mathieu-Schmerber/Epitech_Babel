@@ -17,8 +17,6 @@
 #include "portaudio.h"
 #include "Opus.hpp"
 
-using namespace std;
-
 class Audio
 {
     private:
@@ -28,7 +26,7 @@ class Audio
         PaError _error;
         PaStream *_stream;
 
-        void Error(string errorMessage);
+        void Error(std::string errorMessage);
         void Error();
 
     public:
@@ -36,8 +34,8 @@ class Audio
         ~Audio();
         void OpenStream();
         void StartStream();
-        vector<uint16_t> ReadStream();
-        void WriteStream(vector<uint16_t> sample);
+        std::vector<uint16_t> ReadStream();
+        void WriteStream(std::vector<uint16_t> sample);
         void StopStream();
         void CloseStream();
         void Terminate();

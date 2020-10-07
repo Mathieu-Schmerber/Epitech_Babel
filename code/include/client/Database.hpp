@@ -12,7 +12,7 @@
 #include <vector>
 #include <QtNetwork/QTcpSocket>
 #include <QtWidgets/QtWidgets>
-#include "code/include/Contact.hpp"
+#include "Contact.hpp"
 
 class Database : public QWidget
 {

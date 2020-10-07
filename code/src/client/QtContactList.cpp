@@ -7,7 +7,7 @@
 
 #include <QtWidgets/QApplication>
 #include "QtContactList.hpp"
-#include "code/include/Contact.hpp"
+#include "Contact.hpp"
 #include "QtStyle.hpp"
 
 QtContactList::QtContactList(QWidget *parent, int w, int h) : QWidget(parent)

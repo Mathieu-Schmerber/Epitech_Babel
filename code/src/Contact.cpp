@@ -5,7 +5,7 @@
 ** Contact
 */
 
-#include "code/include/Contact.hpp"
+#include "Contact.hpp"
 
 Contact::Contact(const std::string &ip, const std::string &name, int port)
 : _ip(ip), _name(name), _port(port) {}

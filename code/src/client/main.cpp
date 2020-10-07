@@ -11,8 +11,6 @@
 #include <string>
 #include "Core.hpp"
 #include "Error.hpp"
-#include "Opus.h"
-#include "Audio.hpp"
 
 int error(const std::string &msg)
 {

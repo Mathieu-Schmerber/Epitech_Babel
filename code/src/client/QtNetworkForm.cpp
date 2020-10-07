@@ -8,6 +8,7 @@
 #include <iostream>
 #include "QtNetworkForm.hpp"
 #include "Error.hpp"
+#include "QtStyle.hpp"
 
 QtNetworkForm::QtNetworkForm(const std::string &title) : QDialog()
 {
@@ -16,6 +17,7 @@ QtNetworkForm::QtNetworkForm(const std::string &title) : QDialog()
     this->_srvIp = "127.0.0.1";
     this->_srvPort = -1;
     this->initGUI(title);
+    this->applyStyle();
 }
 
 QtNetworkForm::~QtNetworkForm() {}
@@ -23,7 +25,7 @@ QtNetworkForm::~QtNetworkForm() {}
 void QtNetworkForm::initGUI(const std::string &title)
 {
     this->setWindowTitle(title.c_str());
-    this->resize(500, 300);
+    this->resize(500, 270);
     this->_layout = new QFormLayout(this);
     this->_databaseIpEdit = new QLineEdit();
     this->_databasePortEdit = new QLineEdit();
@@ -33,6 +35,11 @@ void QtNetworkForm::initGUI(const std::string &title)
     this->_databaseTitle = new QLabel("Babel server");
     this->_myTitle = new QLabel("Babel client");
     this->_validationBtn = new QPushButton("Connect to server");
+    this->_databaseIpLabel = new QLabel("Ip:");
+    this->_databasePortLabel = new QLabel("Port:");
+    this->_myNameLabel = new QLabel("Nickname:");
+    this->_myIpTextLabel = new QLabel("Ip:");
+    this->_myPortLabel = new QLabel("Port:");
 
     this->_databaseTitle->setFont(QFont("sans-serif", 14, QFont::Bold));
     this->_myTitle->setFont(QFont("sans-serif", 14, QFont::Bold));
@@ -41,15 +48,33 @@ void QtNetworkForm::initGUI(const std::string &title)
     this->_myPortEdit->setText("4242");
     this->_layout->labelForField(this->_databaseTitle);
     this->_layout->addRow(this->_databaseTitle);
-    this->_layout->addRow("Ip:", this->_databaseIpEdit);
-    this->_layout->addRow("Port:", this->_databasePortEdit);
+    this->_layout->addRow(this->_databaseIpLabel, this->_databaseIpEdit);
+    this->_layout->addRow(this->_databasePortLabel, this->_databasePortEdit);
     this->_layout->addRow(this->_myTitle);
-    this->_layout->addRow("Nickname:", this->_myNameEdit);
-    this->_layout->addRow("Ip:", this->_myIpLabel);
-    this->_layout->addRow("Port:", this->_myPortEdit);
+    this->_layout->addRow(this->_myNameLabel, this->_myNameEdit);
+    this->_layout->addRow(this->_myIpTextLabel, this->_myIpLabel);
+    this->_layout->addRow(this->_myPortLabel, this->_myPortEdit);
     this->_layout->addRow(this->_validationBtn);
     this->_validationBtn->setFont(QFont("sans-serif", 14));
     connect(_validationBtn, SIGNAL(clicked()), this, SLOT(saveForm()));
+}
+
+void QtNetworkForm::applyStyle()
+{
+    this->_databaseTitle->setStyleSheet(QtStyle::titleStyle);
+    this->_myTitle->setStyleSheet(QtStyle::titleStyle);
+    this->_validationBtn->setStyleSheet(QtStyle::buttonStyle);
+    this->_databaseIpEdit->setStyleSheet(QtStyle::inputStyle);
+    this->_databasePortEdit->setStyleSheet(QtStyle::inputStyle);
+    this->_myNameEdit->setStyleSheet(QtStyle::inputStyle);
+    this->_myPortEdit->setStyleSheet(QtStyle::inputStyle);
+    this->_databaseIpLabel->setStyleSheet(QtStyle::labelStyle);
+    this->_databasePortLabel->setStyleSheet(QtStyle::labelStyle);
+    this->_myIpLabel->setStyleSheet(QtStyle::labelStyle);
+    this->_myIpTextLabel->setStyleSheet(QtStyle::labelStyle);
+    this->_myNameLabel->setStyleSheet(QtStyle::labelStyle);
+    this->_myPortLabel->setStyleSheet(QtStyle::labelStyle);
+    this->setStyleSheet("background: #3e4349;");
 }
 
 QString QtNetworkForm::getIPV4() const

@@ -25,6 +25,8 @@ class Contact
                 const std::string &name = "null",
                 int port = -1);
 
+    friend bool operator!=(const Contact &lhs, const Contact &rhs);
+
     void setIp(const std::string &ip);
 
     void setName(const std::string &name);
@@ -32,6 +34,8 @@ class Contact
     void setPort(int port);
 
     ~Contact() = default;
+
+    bool operator==(const Contact &rhs) const;
 
     template<class Archive>
     void serialize(Archive& ar, const unsigned int version){

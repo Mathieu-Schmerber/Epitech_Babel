@@ -26,8 +26,13 @@ private:
     QLineEdit *_databaseIpEdit;
     QLineEdit *_databasePortEdit;
     QLineEdit *_myNameEdit;
+    QLabel *_databaseIpLabel;
+    QLabel *_databasePortLabel;
+    QLabel *_myNameLabel;
     QLabel *_myIpLabel;
+    QLabel *_myIpTextLabel;
     QLineEdit *_myPortEdit;
+    QLabel *_myPortLabel;
     QPushButton *_validationBtn;
 
 private:
@@ -45,6 +50,7 @@ public:
 
         QString getIPV4() const;
         void initGUI(const std::string &title);
+        void applyStyle();
         const std::string &getSrvIp() const;
         const std::string &getMyName() const;
         int getSrvPort() const;

@@ -5,7 +5,12 @@
 ** main babel
 */
 
+#include "Audio.hpp"
+#include "Opus.hpp"
+#include <vector>
 #include <iostream>
+#include <unistd.h>
+#include <string>
 #include "Core.hpp"
 #include "Error.hpp"
 

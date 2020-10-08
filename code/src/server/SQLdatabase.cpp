@@ -54,7 +54,6 @@ int SQLdatabase::getContactList(void *data, int ac, char **av, char **azColName)
             port.assign(av[i]);
         if (strcmp(azColName[i], "IP") == 0)
             ip.assign(av[i]);
-        printf("%s = %s\n", azColName[i], av[i] ? av[i] : "NULL");
     }
     Contact contact(ip, name, std::stoi(port));
     std::vector<Contact> *contactList = static_cast<std::vector<Contact>*>(data);
@@ -74,7 +73,6 @@ std::string SQLdatabase::getContactQuery() {
         }
         sqlite3_free(error);
         query.setData(contacts);
-        std::cout << contacts[0].getName() << ", " << contacts[0].getPort() << ", " << contacts[0].getIp() << std::endl;
     }
     std::string serialised(TcpSerializeQuery(query));
     return serialised;

@@ -33,19 +33,11 @@ async_handler::async_handler(boost::asio::io_context& io_context, SQLdatabase *d
 
     TcpQuery query(TcpQuery::CLIENT_LIST);
     query.addLine(Contact("127.0.0.1", "ok", 4242));
-
-    _socket.async_write_some(
-        boost::asio::buffer(TcpSerializeQuery(query)),
-        boost::bind(&async_handler::handle_write,
-                    shared_from_this(),
-                    boost::asio::placeholders::error,
-                    boost::asio::placeholders::bytes_transferred));
  }
 
  void async_handler::handle_read(const boost::system::error_code& err, size_t bytes)
  {
      if (!err) {
-        std::cout << data << std::endl;
         TcpQuery query = TcpDeserializeQuery(data);
         if (query.getType() == TcpQuery::CONNECT) {
             std::string sql = "INSERT INTO CONTACT (IP,PORT,NAME)" \
@@ -55,12 +47,17 @@ async_handler::async_handler(boost::asio::io_context& io_context, SQLdatabase *d
                 + "'" +std::to_string(query.getData()[0].getPort()) + "'" + ',' 
                 + "'" + query.getData()[0].getName() + "'" + ");";
 
-            std::cout << sql << std::endl;
             _db->rc = sqlite3_exec(_db->db, sql.c_str(), SQLdatabase::callback, 0,&_db->error);
              if( _db->rc != SQLITE_OK ) {
                 fprintf(stderr, "SQL error: %s\n", _db->error);
              }
             sqlite3_free(_db->error);
+            _socket.async_write_some(
+            boost::asio::buffer(_db->getContactQuery()),
+            boost::bind(&async_handler::handle_write,
+                    shared_from_this(),
+                    boost::asio::placeholders::error,
+                    boost::asio::placeholders::bytes_transferred));
         }
         memset(data, 0, sizeof(data));
         _socket.async_read_some(

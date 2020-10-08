@@ -13,6 +13,7 @@
 #include "Contact.hpp"
 #include "Opus.hpp"
 #include "Audio.hpp"
+#include "UdpRecorder.hpp"
 
 class Window;
 
@@ -29,8 +30,15 @@ public:
         IN_CALL
     };
 
+    Contact _me;
+
     CallManager(Window *window, const Contact &me);
     ~CallManager();
+
+    const Contact &getInCall() const;
+    Audio* getAudio() const;
+    Opus* getOpus() const;
+    QUdpSocket* getSocket() const;
 
 private:
     Window *_window;
@@ -39,9 +47,9 @@ private:
     Contact _inCall;
     Contact _requestingCall;
     Contact _waitingForResponse;
-    Contact _me;
     State _state;
-
+    
+    UdpRecorder *_recorder;
     Audio *_audio;
     Opus *_opus;
 

@@ -49,6 +49,7 @@ set(CLIENT_HEADERS
         code/include/client/CallManager.hpp
         code/include/client/QtNetworkForm.hpp
         code/include/client/UdpQuery.hpp
+        code/include/client/UdpRecorder.hpp
         code/include/client/QtStyle.hpp
         code/include/TcpQuery.hpp
         code/include/Contact.hpp
@@ -68,6 +69,7 @@ set(CLIENT_SOURCES
         code/src/client/QtNetworkForm.cpp
         code/src/client/main.cpp
         code/src/client/UdpQuery.cpp
+        code/src/client/UdpRecorder.cpp
         code/src/TcpQuery.cpp
         code/src/Contact.cpp
         code/src/client/Opus.cpp

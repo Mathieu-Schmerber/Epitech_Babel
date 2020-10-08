@@ -30,11 +30,33 @@ CallManager::CallManager(Window *window, const Contact &me) : QWidget(window)
     connect(_section, SIGNAL(hangupEvt()), this, SLOT(sendStopCall()));
     connect(_section, SIGNAL(acceptEvt()), this, SLOT(sendConfirmCall()));
     connect(window->getContactList(), SIGNAL(startEvt(const Contact &)), this, SLOT(sendStartCall(const Contact &)));
+
+    this->_recorder = new UdpRecorder(this);
 }
 
 CallManager::~CallManager()
 {
     this->_socket->close();
+}
+
+Audio* CallManager::getAudio() const
+{
+    return this->_audio;
+}
+
+Opus* CallManager::getOpus() const
+{
+    return this->_opus;
+}
+
+QUdpSocket* CallManager::getSocket() const
+{
+    return this->_socket;
+}
+
+const Contact &CallManager::getInCall() const
+{
+    return this->_inCall;
 }
 
 //region "Sender"
@@ -110,9 +132,9 @@ void CallManager::receiveConfirmCall(const Contact &sender)
     this->_state = IN_CALL;
     this->_inCall = sender;
     this->_section->setState(_state, sender);
-    this->setupAudio();
     std::cout << "Setup audio on Confirm receive" << std::endl;
-    this->sendRecord();
+    this->setupAudio();
+    this->_recorder->recordLoop();
 }
 
 void CallManager::receiveStopCall(const Contact &sender)
@@ -166,29 +188,6 @@ void CallManager::setupAudio()
     this->_opus = new Opus(_audio->getSampleRate(),
                            _audio->getBufferSize(),
                            _audio->getChannelNb());
-}
-
-void CallManager::sendShortRecord(const std::vector<uint16_t> &record)
-{
-    UdpQuery query(UdpQuery::SEND_AUDIO, _me);
-    QByteArray data;
-
-    query.setData(record);
-    data.append(UdpSerializeQuery(query).c_str());
-    this->_socket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
-    std::cout << "Send audio to " << std::to_string(_inCall.getPort()) << std::endl;
-}
-
-void CallManager::sendRecord()
-{
-    std::vector<uint16_t> rec;
-    std::vector<uint16_t> sample;
-
-    while (this->_state == IN_CALL) {
-        rec = _audio->ReadStream();
-        sample = _opus->Encode(rec);
-        this->sendShortRecord(sample);
-    }
 }
 
 void CallManager::receiveRecord(const std::vector<uint16_t> &record)

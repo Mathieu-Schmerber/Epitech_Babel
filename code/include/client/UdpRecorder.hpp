@@ -25,7 +25,7 @@ public:
 private:
     CallManager* _parent;
 
-    void sendPackage(std::vector<uint16_t> record, QUdpSocket* socket, Contact calling);
+    void sendPackage(std::vector<uint16_t> record, QUdpSocket* socket, Contact calling, int id);
 
 public slots:
     void recordLoop();

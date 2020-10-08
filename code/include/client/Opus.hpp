@@ -14,7 +14,7 @@
 #include <string>
 
 #define CHANNELS (2)
-#define FRAMES_PER_BUFFER   (1024)
+#define FRAMES_PER_BUFFER (1024)
 #define SAMPLE_RATE (48000)
 
 class Opus

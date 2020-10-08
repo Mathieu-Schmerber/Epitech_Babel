@@ -111,7 +111,6 @@ void CallManager::sendConfirmCall()
     this->_socket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
     this->_section->setState(_state, _inCall);
     this->setupAudio();
-    std::cout << "Setup audio on Confirm send" << std::endl;
 }
 //endregion
 
@@ -132,7 +131,6 @@ void CallManager::receiveConfirmCall(const Contact &sender)
     this->_state = IN_CALL;
     this->_inCall = sender;
     this->_section->setState(_state, sender);
-    std::cout << "Setup audio on Confirm receive" << std::endl;
     this->setupAudio();
     this->_recorder->recordLoop();
 }
@@ -165,7 +163,7 @@ void CallManager::handleQueries(const std::string &query)
             this->receiveStopCall(data.getSender());
             break;
         case UdpQuery::SEND_AUDIO:
-            std::cout << "receive SEND_AUDIO" << std::endl;
+            std::cout << "receive SEND_AUDIO +> id:" << std::to_string(data._id) << std::endl;
             this->receiveRecord(data.getData());
             break;
     }
@@ -193,4 +191,5 @@ void CallManager::setupAudio()
 void CallManager::receiveRecord(const std::vector<uint16_t> &record)
 {
     _audio->WriteStream(_opus->Decode(record));
+    //_audio->WriteStream(record);
 }

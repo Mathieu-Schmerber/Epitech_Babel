@@ -50,6 +50,7 @@ private:
     State _state;
     
     UdpRecorder *_recorder;
+    QThread* _thread;
     Audio *_audio;
     Opus *_opus;
 

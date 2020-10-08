@@ -19,15 +19,15 @@ UdpRecorder::~UdpRecorder()
 
 }
 
-void UdpRecorder::sendPackage(std::vector<uint16_t> record, QUdpSocket* socket, Contact calling)
+void UdpRecorder::sendPackage(std::vector<uint16_t> record, QUdpSocket* socket, Contact calling, int id)
 {
-    UdpQuery query(UdpQuery::SEND_AUDIO, this->_parent->_me);
+    UdpQuery query(UdpQuery::SEND_AUDIO, this->_parent->_me, id);
     QByteArray data;
 
     query.setData(record);
     data.append(UdpSerializeQuery(query).c_str());
     socket->writeDatagram(data, QHostAddress(calling.getIp().c_str()), calling.getPort());
-    std::cout << "Send audio to " << std::to_string(calling.getPort()) << std::endl;
+   // std::cout << "Send audio to " << std::to_string(calling.getPort()) << std::endl;
 }
 
 void UdpRecorder::recordLoop()
@@ -38,10 +38,14 @@ void UdpRecorder::recordLoop()
     auto* _opus = this->_parent->getOpus();
     auto* socket = this->_parent->getSocket();
     Contact calling = this->_parent->getInCall();
+    
+    int i = 0;
 
-    while (1) {
+    while(1)
+    {
         rec = _audio->ReadStream();
         sample = _opus->Encode(rec);
-        this->sendPackage(sample, socket, calling);
+        i++;
+        this->sendPackage(sample, socket, calling, i);
     }
 }

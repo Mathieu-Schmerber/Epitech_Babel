@@ -33,7 +33,7 @@ Q_OBJECT
         explicit Database(const std::string &ip, const int &port, QWidget *parent);
         ~Database();
 
-        void connect();
+        void connect(const Contact &me);
 };
 
 #endif

@@ -31,8 +31,9 @@ class TcpQuery
 		void addLine(Contact line);
 		QueryType getType() const;
         std::vector<Contact> getData() const;
+        void setData(const std::vector<Contact> &contact);
 
-        template<class Archive>
+    template<class Archive>
         void serialize(Archive& ar, const unsigned int version){
             ar & _data & _type;
         }

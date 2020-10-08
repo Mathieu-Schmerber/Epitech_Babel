@@ -23,6 +23,12 @@ std::vector<Contact> TcpQuery::getData() const
     return this->_data;
 }
 
+void TcpQuery::setData(const std::vector<Contact> &contacts)
+{
+    _data = contacts;
+}
+
+
 TcpQuery::QueryType TcpQuery::getType() const
 {
     return this->_type;

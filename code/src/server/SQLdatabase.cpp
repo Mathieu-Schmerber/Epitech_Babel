@@ -18,7 +18,7 @@ SQLdatabase::SQLdatabase()
         sqlite3_close(db);
     }
     sql = "CREATE TABLE CONTACT ("  \
-      "ID             INT PRIMARY KEY     NOT NULL," \
+      "ID             INTEGER PRIMARY KEY AUTOINCREMENT," \
       "IP             VARCHAR(30)         NOT NULL," \
       "PORT           VARCHAR(10)         NOT NULL," \
       "NAME           TEXT                NOT NULL);";

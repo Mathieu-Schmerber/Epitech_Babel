@@ -48,8 +48,14 @@ async_handler::async_handler(boost::asio::io_context& io_context, SQLdatabase *d
         std::cout << data << std::endl;
         TcpQuery query = TcpDeserializeQuery(data);
         if (query.getType() == TcpQuery::CONNECT) {
-            std::string sql = "INSERT INTO CONTACT (ID,IP,PORT,NAME) "  \
-                                "VALUES (1, '0.0.0.0.0', '6666', 'JEAN' ); ";
+            std::string sql = "INSERT INTO CONTACT (IP,PORT,NAME)" \
+                              "VALUES (";
+
+            sql += "'" + query.getData()[0].getIp() + "'" + ',' 
+                + "'" +std::to_string(query.getData()[0].getPort()) + "'" + ',' 
+                + "'" + query.getData()[0].getName() + "'" + ");";
+
+            std::cout << sql << std::endl;
             _db->rc = sqlite3_exec(_db->db, sql.c_str(), SQLdatabase::callback, 0,&_db->error);
              if( _db->rc != SQLITE_OK ) {
                 fprintf(stderr, "SQL error: %s\n", _db->error);

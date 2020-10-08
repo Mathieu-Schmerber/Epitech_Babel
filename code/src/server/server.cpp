@@ -18,7 +18,7 @@ void server::start_accept()
     boost::asio::executor e = _acceptor.get_executor();
     boost::asio::execution_context &e_context = e.context();
     boost::asio::io_context &io_context = static_cast<boost::asio::io_context&>(e_context);
-    boost::shared_ptr<async_handler> client = async_handler::create(io_context);
+    boost::shared_ptr<async_handler> client = async_handler::create(io_context, _db);
     _acceptor.async_accept(client->get_socket(),
                             boost::bind(&server::handle_accept, this, client,
                             boost::asio::placeholders::error));

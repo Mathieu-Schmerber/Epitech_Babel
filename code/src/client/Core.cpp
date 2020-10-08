@@ -42,7 +42,7 @@ void Core::initialize()
     title = me.getName() + " => " + me.getIp() + ":" + std::to_string(me.getPort());
     this->_window->setWindowTitle(title.c_str());
     this->_window->getContactList()->bindDatabase(_database);
-    this->_database->connect();
+    this->_database->connect(me);
     this->_window->display();
     this->_app->exec();
 }

@@ -24,7 +24,7 @@ Database::~Database()
         this->_socket->close();
 }
 
-void Database::connect()
+void Database::connect(const Contact &me)
 {
     QString errorMsg;
 
@@ -34,6 +34,11 @@ void Database::connect()
         errorMsg = QString("%1.").arg(_socket->errorString());
         QMessageBox::critical(this, "Database", errorMsg);
         throw ServerError(errorMsg.toUtf8().constData());
+    } else {
+        TcpQuery query(TcpQuery::CONNECT);
+
+        query.addLine(me);
+        this->_socket->write(TcpSerializeQuery(query).c_str());
     }
 }
 

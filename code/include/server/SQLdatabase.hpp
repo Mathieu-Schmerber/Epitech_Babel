@@ -19,11 +19,13 @@ class SQLdatabase : public boost::enable_shared_from_this<SQLdatabase>
     public:
         SQLdatabase();
         static boost::shared_ptr<SQLdatabase> create();
+        std::string getContactQuery();
         ~SQLdatabase();
         sqlite3 *db;
         int rc;
         char *error;
         static int callback(void *not_used, int ac, char **av, char **azColName);
+        static int getContactList(void *not_used, int ac, char **av, char **azColName);
     private:
         //sqlite3 *db;
         //int rc;

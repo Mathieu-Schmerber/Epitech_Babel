@@ -35,8 +35,8 @@ class Audio : public IAudioStream
         ~Audio();
         void OpenStream();
         void StartStream();
-        std::vector<uint16_t> ReadStream();
-        void WriteStream(std::vector<uint16_t> sample);
+        std::vector<uint16_t> ReadStream() override;
+        void WriteStream(std::vector<uint16_t> sample) override;
         void StopStream();
         void CloseStream();
         void Terminate();

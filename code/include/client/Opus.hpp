@@ -36,8 +36,8 @@ class Opus : public IAudioEncoder
         ~Opus();
         void InitEncoder();
         void InitDecoder();
-        std::vector<uint16_t> Encode(std::vector<uint16_t> data);
-        std::vector<uint16_t> Decode(std::vector<uint16_t> encodedData);
+        std::vector<uint16_t> Encode(std::vector<uint16_t> data) override;
+        std::vector<uint16_t> Decode(std::vector<uint16_t> encodedData) override;
         void DestroyEncoder();
         void DestroyDecoder();
 };

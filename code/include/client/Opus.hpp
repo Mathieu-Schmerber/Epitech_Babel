@@ -12,12 +12,13 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include "IAudioEncoder.hpp"
 
 #define CHANNELS (2)
 #define FRAMES_PER_BUFFER   (1024)
 #define SAMPLE_RATE (48000)
 
-class Opus
+class Opus : public IAudioEncoder
 {
     private:
         int _error;

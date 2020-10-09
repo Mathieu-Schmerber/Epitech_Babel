@@ -16,8 +16,9 @@
 #include <cstring>
 #include "portaudio.h"
 #include "Opus.hpp"
+#include "IAudioStream.hpp"
 
-class Audio
+class Audio : public IAudioStream
 {
     private:
         uint32_t _sampleRate;

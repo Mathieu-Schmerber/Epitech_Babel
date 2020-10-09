@@ -15,9 +15,7 @@ const Contact CONTACT_NULL = Contact("", "", -1);
 
 CallManager::CallManager(Window *window, const Contact &me) : QWidget(window)
 {
-    this->_window = window;
     this->_section = window->getCallSection();
-    this->_socket = new QUdpSocket(this);
     this->_me = me;
     this->_inCall = CONTACT_NULL;
     this->_requestingCall = CONTACT_NULL;
@@ -25,13 +23,9 @@ CallManager::CallManager(Window *window, const Contact &me) : QWidget(window)
     this->_state = CallManager::NONE;
     this->_audio = nullptr;
     this->_opus = nullptr;
-    this->_socket->bind(QHostAddress(me.getIp().c_str()), me.getPort());
-    connect(_socket, SIGNAL(readyRead()), this, SLOT(onDataReceived()));
-    connect(_section, SIGNAL(hangupEvt()), this, SLOT(sendStopCall()));
-    connect(_section, SIGNAL(acceptEvt()), this, SLOT(sendConfirmCall()));
-    connect(window->getContactList(), SIGNAL(startEvt(const Contact &)), this, SLOT(sendStartCall(const Contact &)));
-
-    this->_recorder = new UdpRecorder(this);
+    this->_receiver = nullptr;
+    this->_sender = nullptr;
+    this->setupQuerySocketing(window);
 }
 
 CallManager::~CallManager()
@@ -40,8 +34,36 @@ CallManager::~CallManager()
         delete this->_audio;
         delete this->_opus;
     }
-    this->_socket->close();
-    delete this->_socket;
+    this->_querySocket->close();
+    delete this->_querySocket;
+}
+
+void CallManager::setupQuerySocketing(Window *window)
+{
+    this->_querySocket = new QUdpSocket(this);
+    this->_querySocket->bind(QHostAddress(_me.getIp().c_str()), 4242);
+    connect(_querySocket, SIGNAL(readyRead()), this, SLOT(onDataReceived()));
+    connect(_section, SIGNAL(hangupEvt()), this, SLOT(sendStopCall()));
+    connect(_section, SIGNAL(acceptEvt()), this, SLOT(sendConfirmCall()));
+    connect(window->getContactList(), SIGNAL(startEvt(const Contact &)), this, SLOT(sendStartCall(const Contact &)));
+}
+
+void CallManager::setupAudio()
+{
+    this->_audio = new Audio();
+    this->_opus = new Opus(_audio->getSampleRate(),
+                           _audio->getBufferSize(),
+                           _audio->getChannelNb());
+}
+
+void CallManager::setupSoundSockets(int readOn, int sendOn)
+{
+    this->_sender = new UdpSoundIO(this,
+    Contact(_me.getIp(), _me.getName(), sendOn),
+    Contact(_inCall.getIp(), _inCall.getName(), sendOn));
+    this->_receiver = new UdpSoundIO(this,
+    Contact(_me.getIp(), _me.getName(), readOn),
+    Contact(_inCall.getIp(), _inCall.getName(), readOn));
 }
 
 Audio* CallManager::getAudio() const
@@ -54,14 +76,9 @@ Opus* CallManager::getOpus() const
     return this->_opus;
 }
 
-QUdpSocket* CallManager::getSocket() const
+CallManager::State CallManager::getState() const
 {
-    return this->_socket;
-}
-
-const Contact &CallManager::getInCall() const
-{
-    return this->_inCall;
+    return this->_state;
 }
 
 //region "Sender"
@@ -78,7 +95,7 @@ void CallManager::sendStartCall(const Contact &contact)
         return;
     }
     data.append(UdpSerializeQuery(UdpQuery(UdpQuery::START_CALL, _me)).c_str());
-    this->_socket->writeDatagram(data, QHostAddress(contact.getIp().c_str()), contact.getPort());
+    this->_querySocket->writeDatagram(data, QHostAddress(contact.getIp().c_str()), contact.getPort());
     this->_section->setState(_state, contact);
 }
 
@@ -89,9 +106,12 @@ void CallManager::sendConfirmCall()
     this->_inCall = this->_requestingCall;
     this->_state = IN_CALL;
     data.append(UdpSerializeQuery(UdpQuery(UdpQuery::CONFIRM_CALL, _me)).c_str());
-    this->_socket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
+    this->_querySocket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
     this->_section->setState(_state, _inCall);
     this->setupAudio();
+    this->setupSoundSockets(4444, 4343);
+    //TEMPORARY
+    this->_receiver->createSocket();
 }
 
 void CallManager::sendStopCall()
@@ -113,7 +133,7 @@ void CallManager::sendStopCall()
             return;
     }
     data.append(UdpSerializeQuery(UdpQuery(UdpQuery::STOP_CALL, _me)).c_str());
-    this->_socket->writeDatagram(data, QHostAddress(receiver.getIp().c_str()), receiver.getPort());
+    this->_querySocket->writeDatagram(data, QHostAddress(receiver.getIp().c_str()), receiver.getPort());
     this->_inCall = CONTACT_NULL;
     this->_requestingCall = CONTACT_NULL;
     this->_waitingForResponse = CONTACT_NULL;
@@ -126,7 +146,7 @@ void CallManager::sendCancelCall(const Contact& contact)
     QByteArray data;
 
     data.append(UdpSerializeQuery(UdpQuery(UdpQuery::CANCEL_CALL, _me)).c_str());
-    this->_socket->writeDatagram(data, QHostAddress(contact.getIp().c_str()), contact.getPort());
+    this->_querySocket->writeDatagram(data, QHostAddress(contact.getIp().c_str()), contact.getPort());
 }
 
 //endregion
@@ -153,7 +173,10 @@ void CallManager::receiveConfirmCall(const Contact &sender)
     this->_inCall = sender;
     this->_section->setState(_state, sender);
     this->setupAudio();
-    this->_recorder->recordLoop();
+    this->setupSoundSockets(4343, 4444);
+    //TEMPORARY
+    this->_sender->createSocket();
+    this->_sender->recordAndSend();
 }
 
 void CallManager::receiveStopCall(const Contact &sender)
@@ -196,8 +219,7 @@ void CallManager::handleQueries(const std::string &query)
         case UdpQuery::CANCEL_CALL:
             this->receiveCancelCall(data.getSender());
             break;
-        case UdpQuery::SEND_AUDIO:
-            this->receiveRecord(data.getData());
+        default:
             break;
     }
 }
@@ -208,20 +230,7 @@ void CallManager::onDataReceived()
     QHostAddress sender;
     quint16 senderPort;
 
-    buffer.resize(this->_socket->pendingDatagramSize());
-    _socket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
+    buffer.resize(this->_querySocket->pendingDatagramSize());
+    _querySocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
     handleQueries(std::string(buffer.data()));
-}
-
-void CallManager::setupAudio()
-{
-    this->_audio = new Audio();
-    this->_opus = new Opus(_audio->getSampleRate(),
-                           _audio->getBufferSize(),
-                           _audio->getChannelNb());
-}
-
-void CallManager::receiveRecord(const std::vector<uint16_t> &record)
-{
-    _audio->WriteStream(_opus->Decode(record));
 }

@@ -13,7 +13,7 @@
 #include "Contact.hpp"
 #include "Opus.hpp"
 #include "Audio.hpp"
-#include "UdpRecorder.hpp"
+#include "UdpSoundIO.hpp"
 
 class Window;
 
@@ -30,29 +30,30 @@ public:
         IN_CALL
     };
 
-    Contact _me;
-
     CallManager(Window *window, const Contact &me);
     ~CallManager();
 
-    const Contact &getInCall() const;
     Audio* getAudio() const;
     Opus* getOpus() const;
-    QUdpSocket* getSocket() const;
+    State getState() const;
 
 private:
-    Window *_window;
+    Contact _me;
     QtCallSection *_section;
-    QUdpSocket *_socket;
     Contact _inCall;
     Contact _requestingCall;
     Contact _waitingForResponse;
     State _state;
-    
-    UdpRecorder *_recorder;
-    QThread* _thread;
     Audio *_audio;
     Opus *_opus;
+
+    QUdpSocket *_querySocket;
+    UdpSoundIO *_receiver;
+    UdpSoundIO *_sender;
+
+    void setupAudio();
+    void setupQuerySocketing(Window *window);
+    void setupSoundSockets(int readOn, int sendOn);
 
     void receiveStartCall(const Contact &sender);
     void receiveConfirmCall(const Contact &sender);
@@ -60,12 +61,8 @@ private:
     void receiveCancelCall(const Contact& sender);
     void handleQueries(const std::string &query);
 
-    void setupAudio();
 
     void sendCancelCall(const Contact& contact);
-    void sendRecord();
-    void receiveRecord(const std::vector<uint16_t> &record);
-    void sendShortRecord(const std::vector<uint16_t> &record);
 
 public slots:
     void sendStartCall(const Contact &contact);

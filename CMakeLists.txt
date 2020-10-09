@@ -49,12 +49,12 @@ set(CLIENT_HEADERS
         code/include/client/CallManager.hpp
         code/include/client/QtNetworkForm.hpp
         code/include/client/UdpQuery.hpp
-        code/include/client/UdpRecorder.hpp
         code/include/client/QtStyle.hpp
         code/include/TcpQuery.hpp
         code/include/Contact.hpp
         code/include/client/Opus.hpp
-        code/include/client/Audio.hpp)
+        code/include/client/Audio.hpp
+        code/include/client/UdpSoundIO.hpp)
 
 set(CLIENT_SOURCES
         code/src/client/Core.cpp
@@ -69,11 +69,11 @@ set(CLIENT_SOURCES
         code/src/client/QtNetworkForm.cpp
         code/src/client/main.cpp
         code/src/client/UdpQuery.cpp
-        code/src/client/UdpRecorder.cpp
         code/src/TcpQuery.cpp
         code/src/Contact.cpp
         code/src/client/Opus.cpp
-        code/src/client/Audio.cpp)
+        code/src/client/Audio.cpp
+        code/src/client/UdpSoundIO.cpp)
 
 add_executable(babel_client
         ${CLIENT_HEADERS}

@@ -56,11 +56,13 @@ private:
 
     void receiveStartCall(const Contact &sender);
     void receiveConfirmCall(const Contact &sender);
-    void receiveStopCall(const Contact &sender);
+    void receiveStopCall(const Contact& sender);
+    void receiveCancelCall(const Contact& sender);
     void handleQueries(const std::string &query);
 
     void setupAudio();
 
+    void sendCancelCall(const Contact& contact);
     void sendRecord();
     void receiveRecord(const std::vector<uint16_t> &record);
     void sendShortRecord(const std::vector<uint16_t> &record);

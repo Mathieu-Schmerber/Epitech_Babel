@@ -36,7 +36,12 @@ CallManager::CallManager(Window *window, const Contact &me) : QWidget(window)
 
 CallManager::~CallManager()
 {
+    if (this->_audio && this->_opus) {
+        delete this->_audio;
+        delete this->_opus;
+    }
     this->_socket->close();
+    delete this->_socket;
 }
 
 Audio* CallManager::getAudio() const
@@ -67,11 +72,26 @@ void CallManager::sendStartCall(const Contact &contact)
     if (_state == NONE) {
         _state = WAITING_FOR_RESPONSE;
         _waitingForResponse = contact;
-    } else // TODO: show error box "Already in a call.";
+    }
+    else {
+        QMessageBox::warning(this, "Call", QString("You are already in a call."));
         return;
+    }
     data.append(UdpSerializeQuery(UdpQuery(UdpQuery::START_CALL, _me)).c_str());
     this->_socket->writeDatagram(data, QHostAddress(contact.getIp().c_str()), contact.getPort());
     this->_section->setState(_state, contact);
+}
+
+void CallManager::sendConfirmCall()
+{
+    QByteArray data;
+
+    this->_inCall = this->_requestingCall;
+    this->_state = IN_CALL;
+    data.append(UdpSerializeQuery(UdpQuery(UdpQuery::CONFIRM_CALL, _me)).c_str());
+    this->_socket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
+    this->_section->setState(_state, _inCall);
+    this->setupAudio();
 }
 
 void CallManager::sendStopCall()
@@ -101,17 +121,14 @@ void CallManager::sendStopCall()
     this->_section->setState(_state);
 }
 
-void CallManager::sendConfirmCall()
+void CallManager::sendCancelCall(const Contact& contact)
 {
     QByteArray data;
 
-    this->_inCall = this->_requestingCall;
-    this->_state = IN_CALL;
-    data.append(UdpSerializeQuery(UdpQuery(UdpQuery::CONFIRM_CALL, _me)).c_str());
-    this->_socket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
-    this->_section->setState(_state, _inCall);
-    this->setupAudio();
+    data.append(UdpSerializeQuery(UdpQuery(UdpQuery::CANCEL_CALL, _me)).c_str());
+    this->_socket->writeDatagram(data, QHostAddress(contact.getIp().c_str()), contact.getPort());
 }
+
 //endregion
 
 //region "Receiver"
@@ -119,8 +136,12 @@ void CallManager::receiveStartCall(const Contact &sender)
 {
     QByteArray data;
 
-    if (_state == IN_CALL || _state == RECEIVING_CALL) // TODO: Send a Cancel query
+    if (_state == IN_CALL || _state == RECEIVING_CALL) {
+        this->sendCancelCall(sender);
+        QMessageBox::critical(this, "Call", QString("%1 (%2:%3) tried to call you.")
+        .arg(sender.getName().c_str()).arg(sender.getIp().c_str()).arg(sender.getPort()));
         return;
+    }
     this->_state = RECEIVING_CALL;
     this->_requestingCall = sender;
     this->_section->setState(_state, this->_requestingCall);
@@ -143,6 +164,19 @@ void CallManager::receiveStopCall(const Contact &sender)
     this->_state = NONE;
     this->_section->setState(_state);
 }
+
+void CallManager::receiveCancelCall(const Contact& sender)
+{
+    if (this->_state == CallManager::WAITING_FOR_RESPONSE && this->_waitingForResponse == sender) {
+        this->_inCall = CONTACT_NULL;
+        this->_requestingCall = CONTACT_NULL;
+        this->_waitingForResponse = CONTACT_NULL;
+        this->_state = NONE;
+        this->_section->setState(_state);
+        QMessageBox::critical(this, "Call", QString("%1 (%2:%3) is busy.")
+        .arg(sender.getName().c_str()).arg(sender.getIp().c_str()).arg(sender.getPort()));
+    }
+}
 //endregion
 
 void CallManager::handleQueries(const std::string &query)
@@ -151,19 +185,18 @@ void CallManager::handleQueries(const std::string &query)
 
     switch (data.getType()) {
         case UdpQuery::START_CALL:
-            std::cout << "receive START_CALL" << std::endl;
             this->receiveStartCall(data.getSender());
             break;
         case UdpQuery::CONFIRM_CALL:
-            std::cout << "receive CONFIRM_CALL" << std::endl;
             this->receiveConfirmCall(data.getSender());
             break;
         case UdpQuery::STOP_CALL:
-            std::cout << "receive STOP_CALL" << std::endl;
             this->receiveStopCall(data.getSender());
             break;
+        case UdpQuery::CANCEL_CALL:
+            this->receiveCancelCall(data.getSender());
+            break;
         case UdpQuery::SEND_AUDIO:
-            std::cout << "receive SEND_AUDIO +> id:" << std::to_string(data._id) << std::endl;
             this->receiveRecord(data.getData());
             break;
     }
@@ -191,5 +224,4 @@ void CallManager::setupAudio()
 void CallManager::receiveRecord(const std::vector<uint16_t> &record)
 {
     _audio->WriteStream(_opus->Decode(record));
-    //_audio->WriteStream(record);
 }

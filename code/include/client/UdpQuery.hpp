@@ -22,7 +22,8 @@ public:
         START_CALL = 0,
         CONFIRM_CALL = 1,
         STOP_CALL = 2,
-        SEND_AUDIO = 3
+        CANCEL_CALL = 3,
+        SEND_AUDIO = 4
     };
 private:
     Contact _sender;

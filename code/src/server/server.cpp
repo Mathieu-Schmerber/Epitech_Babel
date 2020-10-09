@@ -1,4 +1,4 @@
-/*
+﻿/*
 ** EPITECH PROJECT, 2020
 ** server
 ** File description:
@@ -19,6 +19,7 @@ void server::start_accept()
     boost::asio::execution_context &e_context = e.context();
     boost::asio::io_context &io_context = static_cast<boost::asio::io_context&>(e_context);
     boost::shared_ptr<async_handler> client = async_handler::create(io_context, _db);
+
     _acceptor.async_accept(client->get_socket(),
                             boost::bind(&server::handle_accept, this, client,
                             boost::asio::placeholders::error));
@@ -31,17 +32,17 @@ void server::handle_accept(boost::shared_ptr<async_handler> client, const boost:
     start_accept();
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-  try
+    try
     {
-    boost::asio::io_context io_context;  
-    server server(io_context);
-    io_context.run();
+        boost::asio::io_context io_context;
+        server server(io_context);
+        io_context.run();
     }
-  catch(std::exception& e)
+    catch (std::exception& e)
     {
-    std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << std::endl;
     }
-  return 0;
+    return 0;
 }

@@ -51,7 +51,6 @@ void Database::onDataReceived()
     if (senderSocket) {
         parsed = std::string(senderSocket->readAll().data());
         emit dbUpdateEvt(TcpDeserializeQuery(parsed).getData());
-        std::cout << "[Info] the database has been updated." << std::endl;
     }
 }
 

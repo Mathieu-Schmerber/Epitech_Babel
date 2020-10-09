@@ -1,3 +1,4 @@
+
 /*
 ** EPITECH PROJECT, 2020
 ** Mathieu Schmerber
@@ -27,7 +28,6 @@ void UdpRecorder::sendPackage(std::vector<uint16_t> record, QUdpSocket* socket, 
     query.setData(record);
     data.append(UdpSerializeQuery(query).c_str());
     socket->writeDatagram(data, QHostAddress(calling.getIp().c_str()), calling.getPort());
-   // std::cout << "Send audio to " << std::to_string(calling.getPort()) << std::endl;
 }
 
 void UdpRecorder::recordLoop()

@@ -18,8 +18,8 @@ Core::Core(int ac, char **av)
 
 Core::~Core()
 {
-    delete this->_database;
     delete this->_manager;
+    delete this->_database;
     delete this->_window;
     delete this->_app;
 }
@@ -45,4 +45,5 @@ void Core::initialize()
     this->_database->connect(me);
     this->_window->display();
     this->_app->exec();
+    this->_manager->sendStopCall();
 }

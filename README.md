@@ -11,9 +11,11 @@ Then you need 3 remotes:
 	- epitech
 
 You can install those by running the following commands:
+>$ conan remote add conan-center https://api.bintray.com/conan/conan/conan-center 
+
 >$ conan remote add epitech https://api.bintray.com/conan/epitech/public-conan
 
->$ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan
+>$ conan remote add bincrafters https://api.bintray.com/conan/bincrafters/public-conan 
 
 You can now compile the **Babel project**
 

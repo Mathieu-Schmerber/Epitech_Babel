@@ -7,9 +7,23 @@
 
 #include "server.hpp"
 
+
 server::server(boost::asio::io_context& io_context) : _acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 6666))
 {
     _db = new SQLdatabase();
+    try {
+    boost::asio::ip::udp::resolver   resolver(io_context);
+    boost::asio::ip::udp::resolver::query query(boost::asio::ip::udp::v4(), "google.com", "");
+    boost::asio::ip::udp::resolver::iterator endpoints = resolver.resolve(query);
+    boost::asio::ip::udp::endpoint ep = *endpoints;
+    boost::asio::ip::udp::socket socket(io_context);
+    socket.connect(ep);
+    boost::asio::ip::address addr = socket.local_endpoint().address();
+    std::cout << "My IP is " << addr.to_string() << " running on port 6666" << std::endl;
+ } catch (std::exception& e){
+    std::cerr << "Could not deal with socket. Exception: " << e.what() << std::endl;
+
+ }
     start_accept();
 }
 

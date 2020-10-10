@@ -25,6 +25,7 @@ class async_handler : public boost::enable_shared_from_this<async_handler>
         void handle_write(const boost::system::error_code& err, size_t bytes);
 
         SQLdatabase *_db;
+        std::string buffer;
     private:
         boost::asio::ip::tcp::socket _socket;
         std::string msg = "Oh Hi Marc!";

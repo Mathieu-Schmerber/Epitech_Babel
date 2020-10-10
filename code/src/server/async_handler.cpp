@@ -52,8 +52,9 @@ async_handler::async_handler(boost::asio::io_context& io_context, SQLdatabase *d
                 fprintf(stderr, "SQL error: %s\n", _db->error);
              }
             sqlite3_free(_db->error);
+            buffer = _db->getContactQuery();
             _socket.async_write_some(
-            boost::asio::buffer(_db->getContactQuery()),
+            boost::asio::buffer(buffer),
             boost::bind(&async_handler::handle_write,
                     shared_from_this(),
                     boost::asio::placeholders::error,

@@ -37,6 +37,9 @@ public slots:
     void createSocket();
     void onDataReceived();
     void recordAndSend();
+
+signals:
+    void finished();
 };
 
 #endif

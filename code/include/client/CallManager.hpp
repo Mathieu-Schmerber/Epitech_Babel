@@ -50,6 +50,8 @@ private:
     QUdpSocket *_querySocket;
     UdpSoundIO *_receiver;
     UdpSoundIO *_sender;
+    QThread* _rThread;
+    QThread* _sThread;
 
     void setupAudio();
     void setupQuerySocketing(Window *window);

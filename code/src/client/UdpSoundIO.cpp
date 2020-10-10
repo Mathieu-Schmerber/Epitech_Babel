@@ -10,7 +10,7 @@
 #include "CallManager.hpp"
 
 UdpSoundIO::UdpSoundIO(CallManager *parent, const Contact &settings, const Contact &destination)
-: QObject(parent)
+: QObject()
 {
     this->_socket = nullptr;
     this->_destination = destination;
@@ -23,6 +23,7 @@ UdpSoundIO::UdpSoundIO(CallManager *parent, const Contact &settings, const Conta
 UdpSoundIO::~UdpSoundIO()
 {
     delete this->_socket;
+    std::cout << "~UdpSoundIO()" << std::endl;
 }
 
 void UdpSoundIO::createSocket()
@@ -40,6 +41,7 @@ void UdpSoundIO::sendPacket(const std::vector<uint16_t> &record)
     query.setData(record);
     data.append(UdpSerializeQuery(query).c_str());
     _socket->writeDatagram(data, QHostAddress(_destination.getIp().c_str()), _destination.getPort());
+    //std::cout << "Send on " << _destination.getPort() << std::endl;
 }
 
 void UdpSoundIO::recordAndSend()
@@ -53,6 +55,7 @@ void UdpSoundIO::recordAndSend()
         sample = _opus->Encode(rec);
         this->sendPacket(sample);
     }
+    emit finished();
 }
 
 void UdpSoundIO::parseAndReadQuery(const std::string &query)

@@ -12,6 +12,8 @@
 #include "UdpQuery.hpp"
 
 const Contact CONTACT_NULL = Contact("", "", -1);
+const int PORT_OPT_1 = 4444;
+const int PORT_OPT_2 = 4343;
 
 CallManager::CallManager(Window *window, const Contact &me) : QWidget(window)
 {
@@ -25,6 +27,8 @@ CallManager::CallManager(Window *window, const Contact &me) : QWidget(window)
     this->_opus = nullptr;
     this->_receiver = nullptr;
     this->_sender = nullptr;
+    this->_sThread = nullptr;
+    this->_rThread = nullptr;
     this->setupQuerySocketing(window);
 }
 
@@ -41,7 +45,7 @@ CallManager::~CallManager()
 void CallManager::setupQuerySocketing(Window *window)
 {
     this->_querySocket = new QUdpSocket(this);
-    this->_querySocket->bind(QHostAddress(_me.getIp().c_str()), 4242);
+    this->_querySocket->bind(QHostAddress(_me.getIp().c_str()), _me.getPort());
     connect(_querySocket, SIGNAL(readyRead()), this, SLOT(onDataReceived()));
     connect(_section, SIGNAL(hangupEvt()), this, SLOT(sendStopCall()));
     connect(_section, SIGNAL(acceptEvt()), this, SLOT(sendConfirmCall()));
@@ -64,6 +68,20 @@ void CallManager::setupSoundSockets(int readOn, int sendOn)
     this->_receiver = new UdpSoundIO(this,
     Contact(_me.getIp(), _me.getName(), readOn),
     Contact(_inCall.getIp(), _inCall.getName(), readOn));
+
+    this->_sThread = new QThread(this);
+    this->_sThread->start();
+    this->_sender->moveToThread(_sThread);
+    this->_rThread = new QThread(this);
+    this->_rThread->start();
+    this->_receiver->moveToThread(_rThread);
+    this->_sender->metaObject()->invokeMethod(this->_sender, "createSocket", Qt::QueuedConnection);
+    this->_sender->metaObject()->invokeMethod(this->_sender, "recordAndSend", Qt::QueuedConnection);
+    this->_receiver->metaObject()->invokeMethod(this->_receiver, "createSocket", Qt::QueuedConnection);
+    connect(this->_sender, SIGNAL(finished()), this->_sThread, SLOT(quit()), Qt::DirectConnection);
+    connect(this->_sender, SIGNAL(finished()), this->_sender, SLOT(deleteLater()), Qt::DirectConnection);
+    connect(this->_sender, SIGNAL(finished()), this->_rThread, SLOT(quit()), Qt::DirectConnection);
+    connect(this->_sender, SIGNAL(finished()), this->_receiver, SLOT(deleteLater()), Qt::DirectConnection);
 }
 
 Audio* CallManager::getAudio() const
@@ -109,9 +127,7 @@ void CallManager::sendConfirmCall()
     this->_querySocket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
     this->_section->setState(_state, _inCall);
     this->setupAudio();
-    this->setupSoundSockets(4444, 4343);
-    //TEMPORARY
-    this->_receiver->createSocket();
+    this->setupSoundSockets(PORT_OPT_1, PORT_OPT_2);
 }
 
 void CallManager::sendStopCall()
@@ -156,7 +172,7 @@ void CallManager::receiveStartCall(const Contact &sender)
 {
     QByteArray data;
 
-    if (_state == IN_CALL || _state == RECEIVING_CALL) {
+    if (_state != NONE) {
         this->sendCancelCall(sender);
         QMessageBox::critical(this, "Call", QString("%1 (%2:%3) tried to call you.")
         .arg(sender.getName().c_str()).arg(sender.getIp().c_str()).arg(sender.getPort()));
@@ -173,10 +189,7 @@ void CallManager::receiveConfirmCall(const Contact &sender)
     this->_inCall = sender;
     this->_section->setState(_state, sender);
     this->setupAudio();
-    this->setupSoundSockets(4343, 4444);
-    //TEMPORARY
-    this->_sender->createSocket();
-    this->_sender->recordAndSend();
+    this->setupSoundSockets(PORT_OPT_2, PORT_OPT_1);
 }
 
 void CallManager::receiveStopCall(const Contact &sender)
@@ -208,15 +221,19 @@ void CallManager::handleQueries(const std::string &query)
 
     switch (data.getType()) {
         case UdpQuery::START_CALL:
+            std::cout << "START_CALL from " << data.getSender().getIp() << ":" << data.getSender().getPort() << std::endl;
             this->receiveStartCall(data.getSender());
             break;
         case UdpQuery::CONFIRM_CALL:
+            std::cout << "CONFIRM_CALL from " << data.getSender().getIp() << ":" << data.getSender().getPort() << std::endl;
             this->receiveConfirmCall(data.getSender());
             break;
         case UdpQuery::STOP_CALL:
+            std::cout << "STOP_CALL from " << data.getSender().getIp() << ":" << data.getSender().getPort() << std::endl;
             this->receiveStopCall(data.getSender());
             break;
         case UdpQuery::CANCEL_CALL:
+            std::cout << "CANCEL_CALL from " << data.getSender().getIp() << ":" << data.getSender().getPort() << std::endl;
             this->receiveCancelCall(data.getSender());
             break;
         default:

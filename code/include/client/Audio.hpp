@@ -16,8 +16,9 @@
 #include <cstring>
 #include "portaudio.h"
 #include "Opus.hpp"
+#include "IAudioStream.hpp"
 
-class Audio
+class Audio : public IAudioStream
 {
     private:
         uint32_t _sampleRate;
@@ -34,8 +35,8 @@ class Audio
         ~Audio();
         void OpenStream();
         void StartStream();
-        std::vector<uint16_t> ReadStream();
-        void WriteStream(std::vector<uint16_t> sample);
+        std::vector<uint16_t> ReadStream() override;
+        void WriteStream(std::vector<uint16_t> sample) override;
         void StopStream();
         void CloseStream();
         void Terminate();

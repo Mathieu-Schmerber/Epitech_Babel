@@ -33,8 +33,8 @@ public:
     CallManager(Window *window, const Contact &me);
     ~CallManager();
 
-    Audio* getAudio() const;
-    Opus* getOpus() const;
+    IAudioStream* getAudio() const;
+    IAudioEncoder* getOpus() const;
     State getState() const;
 
 private:
@@ -44,8 +44,8 @@ private:
     Contact _requestingCall;
     Contact _waitingForResponse;
     State _state;
-    Audio *_audio;
-    Opus *_opus;
+    IAudioStream*_audio;
+    IAudioEncoder*_opus;
 
     QUdpSocket *_querySocket;
     UdpSoundIO *_receiver;

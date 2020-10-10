@@ -22,8 +22,8 @@ private:
     Contact _settings;
     Contact _destination;
     QUdpSocket *_socket;
-    Audio *_audio;
-    Opus *_opus;
+    IAudioStream *_audio;
+    IAudioEncoder *_opus;
     CallManager *_parent;
 
     void parseAndReadQuery(const std::string &query);

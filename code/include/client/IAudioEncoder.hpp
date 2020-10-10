@@ -16,8 +16,6 @@ class IAudioEncoder {
         ~IAudioEncoder() = default;
         virtual std::vector<uint16_t> Encode(std::vector<uint16_t> data) = 0;
         virtual std::vector<uint16_t> Decode(std::vector<uint16_t> encodedData) = 0;
-
-
 };
 
 #endif /* !IAUDIOENCODER_HPP_ */

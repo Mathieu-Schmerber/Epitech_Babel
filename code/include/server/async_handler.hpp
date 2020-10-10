@@ -13,6 +13,7 @@
 #include <boost/bind.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include "SQLdatabase.hpp"
+#include "TcpQuery.hpp"
 
 class async_handler : public boost::enable_shared_from_this<async_handler>
 {
@@ -21,6 +22,8 @@ class async_handler : public boost::enable_shared_from_this<async_handler>
         static boost::shared_ptr<async_handler> create(boost::asio::io_context& io_service, SQLdatabase *db);
         boost::asio::ip::tcp::socket& get_socket();
         void start();
+
+
         void handle_read(const boost::system::error_code& err, size_t bytes);
         void handle_write(const boost::system::error_code& err, size_t bytes);
 
@@ -30,6 +33,10 @@ class async_handler : public boost::enable_shared_from_this<async_handler>
         std::string msg = "Oh Hi Marc!";
         enum { max_length = 1024};
         char data[max_length];
+
+        void handleQueries(const TcpQuery &query);
+        void loginUser(const Contact &user);
+        void logoutUser(const Contact &user);
 };
 
 #endif /* !HANDLER_HPP_ */

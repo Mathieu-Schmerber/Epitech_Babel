@@ -24,7 +24,7 @@ Database::~Database()
         this->_socket->close();
 }
 
-void Database::connect(const Contact &me)
+void Database::connect(const Contact& me)
 {
     QString errorMsg;
 
@@ -37,6 +37,16 @@ void Database::connect(const Contact &me)
     } else {
         TcpQuery query(TcpQuery::CONNECT);
 
+        query.addLine(me);
+        this->_socket->write(TcpSerializeQuery(query).c_str());
+    }
+}
+
+void Database::disconnect(const Contact& me)
+{
+    TcpQuery query(TcpQuery::DISCONNECT);
+
+    if (this->_socket != nullptr) {
         query.addLine(me);
         this->_socket->write(TcpSerializeQuery(query).c_str());
     }

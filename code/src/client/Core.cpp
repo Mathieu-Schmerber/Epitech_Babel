@@ -46,4 +46,5 @@ void Core::initialize()
     this->_window->display();
     this->_app->exec();
     this->_manager->sendStopCall();
+    this->_database->disconnect(me);
 }

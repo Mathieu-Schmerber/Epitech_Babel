@@ -54,7 +54,9 @@ set(CLIENT_HEADERS
         code/include/Contact.hpp
         code/include/client/Opus.hpp
         code/include/client/Audio.hpp
-        code/include/client/UdpSoundIO.hpp)
+        code/include/client/UdpSoundIO.hpp
+        code/include/client/IAudioEncoder.hpp
+        code/include/client/IAudioStream.hpp)
 
 set(CLIENT_SOURCES
         code/src/client/Core.cpp

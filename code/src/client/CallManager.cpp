@@ -84,12 +84,12 @@ void CallManager::setupSoundSockets(int readOn, int sendOn)
     connect(this->_sender, SIGNAL(finished()), this->_receiver, SLOT(deleteLater()), Qt::DirectConnection);
 }
 
-Audio* CallManager::getAudio() const
+IAudioStream* CallManager::getAudio() const
 {
     return this->_audio;
 }
 
-Opus* CallManager::getOpus() const
+IAudioEncoder* CallManager::getOpus() const
 {
     return this->_opus;
 }

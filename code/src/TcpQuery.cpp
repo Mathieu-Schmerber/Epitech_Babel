@@ -43,7 +43,7 @@ std::string TcpSerializeQuery(const TcpQuery &query)
     return archive_stream.str();
 }
 
-TcpQuery TcpDeserializeQuery(const std::string &query)
+TcpQuery TcpDeserializeQuery(const std::string& query)
 {
     TcpQuery result;
     std::istringstream iss(query);

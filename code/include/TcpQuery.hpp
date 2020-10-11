@@ -19,7 +19,8 @@ class TcpQuery
         enum QueryType {
             CONNECT = 0,
             CLIENT_LIST = 1,
-            DISCONNECT = 2
+            DISCONNECT = 2,
+            DENIED = 3
         };
     private:
         std::vector<Contact> _data;

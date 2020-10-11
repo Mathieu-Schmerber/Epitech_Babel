@@ -23,6 +23,8 @@ Q_OBJECT
         QTcpSocket *_socket;
         Contact _me;
 
+        void onConnectionRefused();
+
     public slots:
         void onDataReceived();
         void onServerClosed();

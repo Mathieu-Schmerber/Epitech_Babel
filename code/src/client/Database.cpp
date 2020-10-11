@@ -67,11 +67,18 @@ void Database::onDataReceived()
     if (senderSocket) {
         parsed = std::string(senderSocket->readAll().data());
         query = TcpDeserializeQuery(parsed);
-        if (query.getType() != TcpQuery::QueryType::DISCONNECT)
+        if (query.getType() == TcpQuery::QueryType::CLIENT_LIST)
             emit dbUpdateEvt(query.getData());
-        else
+        else if (query.getType() == TcpQuery::QueryType::DISCONNECT)
             this->onServerClosed();
+        else
+            this->onConnectionRefused();
     }
+}
+
+void Database::onConnectionRefused()
+{
+    QMessageBox::critical(this, "Connection refused.", QString("Someone with the same IP and PORT is already connected."));
 }
 
 void Database::onServerClosed()

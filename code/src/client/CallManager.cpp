@@ -39,7 +39,7 @@ CallManager::~CallManager()
         delete this->_opus;
     }
     this->_querySocket->close();
-    delete this->_querySocket;
+    this->_querySocket->deleteLater();
 }
 
 void CallManager::setupQuerySocketing(Window *window)
@@ -107,14 +107,12 @@ void CallManager::sendStartCall(const Contact &contact)
     if (_state == NONE) {
         _state = WAITING_FOR_RESPONSE;
         _waitingForResponse = contact;
+        data.append(UdpSerializeQuery(UdpQuery(UdpQuery::START_CALL, _me)).c_str());
+        this->_querySocket->writeDatagram(data, QHostAddress(contact.getIp().c_str()), contact.getPort());
+        this->_section->setState(_state, contact);
     }
-    else {
+    else
         QMessageBox::warning(this, "Call", QString("You are already in a call."));
-        return;
-    }
-    data.append(UdpSerializeQuery(UdpQuery(UdpQuery::START_CALL, _me)).c_str());
-    this->_querySocket->writeDatagram(data, QHostAddress(contact.getIp().c_str()), contact.getPort());
-    this->_section->setState(_state, contact);
 }
 
 void CallManager::sendConfirmCall()

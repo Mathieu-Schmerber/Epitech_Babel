@@ -9,7 +9,7 @@
 #define CPP_UdpSoundIO_HPP
 
 #include <QtNetwork/QUdpSocket>
-#include <QtWidgets/QWidget>
+#include <QtWidgets/QtWidgets>
 #include "Contact.hpp"
 #include "Audio.hpp"
 #include "Opus.hpp"

@@ -23,7 +23,6 @@ UdpSoundIO::UdpSoundIO(CallManager *parent, const Contact &settings, const Conta
 UdpSoundIO::~UdpSoundIO()
 {
     delete this->_socket;
-    std::cout << "~UdpSoundIO()" << std::endl;
 }
 
 void UdpSoundIO::createSocket()
@@ -41,7 +40,6 @@ void UdpSoundIO::sendPacket(const std::vector<uint16_t> &record)
     query.setData(record);
     data.append(UdpSerializeQuery(query).c_str());
     _socket->writeDatagram(data, QHostAddress(_destination.getIp().c_str()), _destination.getPort());
-    //std::cout << "Send on " << _destination.getPort() << std::endl;
 }
 
 void UdpSoundIO::recordAndSend()

@@ -18,12 +18,12 @@ int error(const std::string &msg)
     return 84;
 }
 
-int usage(int returnValue)
+int usage()
 {
-    printf("USAGE:\n\t./babel_client ip port\n");
-    printf("\tip\tis the server ip address.\n");
-    printf("\tport\tis the server port.\n");
-    return returnValue;
+    std::cout << "USAGE:\n\t./babel_client ip port" << std::endl
+        << "\tip\tis the server ip address" << std::endl
+        << "\tport\tis the server port." << std::endl;
+    return 0;
 }
 
 int setup(int ac, char **av)
@@ -42,8 +42,8 @@ int setup(int ac, char **av)
 
 int main(int ac, char **av)
 {
-    if (ac == 2 && std::string(av[1]) == "-h")
-        return usage(0);
+    if (ac == 2 && (std::string(av[1]) == "-h" || std::string(av[1]) == "--help"))
+        return usage();
     return setup(ac, av);
 }
 

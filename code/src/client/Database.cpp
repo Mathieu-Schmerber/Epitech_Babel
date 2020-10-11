@@ -20,8 +20,11 @@ Database::Database(const std::string &ip, const int &port, QWidget *parent)
 
 Database::~Database()
 {
-    if(this->_socket->isOpen())
+    if (this->_socket && this->_socket->isOpen())
+    {
         this->_socket->close();
+        this->_socket->deleteLater();
+    }
 }
 
 void Database::connect(const Contact& me)
@@ -45,11 +48,13 @@ void Database::connect(const Contact& me)
 
 void Database::disconnect(const Contact& me)
 {
-    TcpQuery query(TcpQuery::DISCONNECT);
+    TcpQuery query(TcpQuery::QueryType::DISCONNECT);
 
     if (this->_socket != nullptr) {
         query.addLine(me);
         this->_socket->write(TcpSerializeQuery(query).c_str());
+        while (this->_socket)
+            QCoreApplication::processEvents();
     }
 }
 
@@ -61,7 +66,11 @@ void Database::onDataReceived()
 
     if (senderSocket) {
         parsed = std::string(senderSocket->readAll().data());
-        emit dbUpdateEvt(TcpDeserializeQuery(parsed).getData());
+        query = TcpDeserializeQuery(parsed);
+        if (query.getType() != TcpQuery::QueryType::DISCONNECT)
+            emit dbUpdateEvt(query.getData());
+        else
+            this->onServerClosed();
     }
 }
 

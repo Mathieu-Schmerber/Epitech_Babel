@@ -21,6 +21,7 @@ Q_OBJECT
         const std::string _ip;
         const int _port;
         QTcpSocket *_socket;
+        Contact _me;
 
     public slots:
         void onDataReceived();

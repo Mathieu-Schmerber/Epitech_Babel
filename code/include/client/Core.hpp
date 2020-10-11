@@ -23,6 +23,9 @@ private:
     Database *_database;
         CallManager *_manager;
         QtNetworkForm *_networkForm;
+		Contact _me;
+
+		void preventDisconnection(const Contact& me);
 
 	public:
 		Core(int ac, char **av);

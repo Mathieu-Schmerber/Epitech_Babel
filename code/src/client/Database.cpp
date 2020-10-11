@@ -39,6 +39,7 @@ void Database::connect(const Contact &me)
 
         query.addLine(me);
         this->_socket->write(TcpSerializeQuery(query).c_str());
+        this->_me = me;
     }
 }
 

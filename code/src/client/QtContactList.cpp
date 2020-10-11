@@ -63,8 +63,22 @@ void QtContactList::callClicked(int index)
     emit startEvt(contact);
 }
 
+void QtContactList::purgeContactList()
+{
+    for (auto& btn : this->_buttons)
+    {
+        this->_mapper->removeMappings(btn);
+        this->_layout->removeWidget(btn);
+        btn->deleteLater();
+    }
+    disconnect(this->_mapper, SIGNAL(mapped(int)), this, SLOT(callClicked(int)));
+    this->_contacts.clear();
+    this->_buttons.clear();
+}
+
 void QtContactList::pushContacts(const std::vector<Contact> &list)
 {
+    this->purgeContactList();
     this->_contacts = list;
     for (size_t i = 0; i < this->_contacts.size(); ++i)
         this->addContactButton(this->_contacts[i].getName(), i);

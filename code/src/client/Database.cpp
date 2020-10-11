@@ -67,12 +67,18 @@ void Database::onDataReceived()
     if (senderSocket) {
         parsed = std::string(senderSocket->readAll().data());
         query = TcpDeserializeQuery(parsed);
-        if (query.getType() == TcpQuery::QueryType::CLIENT_LIST)
+        switch (query.getType())
+        {
+        case TcpQuery::QueryType::CLIENT_LIST:
             emit dbUpdateEvt(query.getData());
-        else if (query.getType() == TcpQuery::QueryType::DISCONNECT)
+            break;
+        case TcpQuery::QueryType::DISCONNECT:
             this->onServerClosed();
-        else
+            break;
+        case TcpQuery::QueryType::DENIED:
             this->onConnectionRefused();
+            break;
+        }
     }
 }
 

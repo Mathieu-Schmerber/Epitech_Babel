@@ -5,8 +5,8 @@
 ** lucas mascaut
 */
 
+#include <algorithm>
 #include "server.hpp"
-
 
 server::server(boost::asio::io_context& io_context) : _acceptor(io_context, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), 6666))
 {

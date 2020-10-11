@@ -23,7 +23,6 @@ class async_handler : public boost::enable_shared_from_this<async_handler>
         boost::asio::ip::tcp::socket& get_socket();
         void start();
 
-
         void handle_read(const boost::system::error_code& err, size_t bytes);
         void handle_write(const boost::system::error_code& err, size_t bytes);
 

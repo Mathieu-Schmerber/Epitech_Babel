@@ -7,10 +7,10 @@
 
 #include "TcpQuery.hpp"
 #include "async_handler.hpp"
+#include "server.hpp"
 
-async_handler::async_handler(boost::asio::io_context& io_context, SQLdatabase *db) : _socket(io_context), _db(db)
-{
-}
+async_handler::async_handler(boost::asio::io_context& io_context, SQLdatabase *db)
+    : _socket(io_context), _db(db) {}
 
  boost::shared_ptr<async_handler> async_handler::create(boost::asio::io_context& io_context, SQLdatabase *db)
  {

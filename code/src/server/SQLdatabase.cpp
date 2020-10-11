@@ -62,9 +62,9 @@ int SQLdatabase::getContactList(void *data, int ac, char **av, char **azColName)
 }
 
 std::string SQLdatabase::getContactQuery() {
-    TcpQuery query(TcpQuery::CONNECT);
+    TcpQuery query(TcpQuery::CLIENT_LIST);
 
-    if (query.getType() == TcpQuery::CONNECT) {
+    if (query.getType() == TcpQuery::CLIENT_LIST) {
         std::vector<Contact> contacts;
         std::string sqlselect = "SELECT * from CONTACT";
         rc = sqlite3_exec(db, sqlselect.c_str(), SQLdatabase::getContactList, static_cast<void *>(&contacts), &error);

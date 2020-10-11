@@ -28,6 +28,7 @@ private:
         QSignalMapper *_mapper;
 
     void addContactButton(const std::string &name, size_t index);
+    void purgeContactList();
 
 signals:
     void startEvt(const Contact &);

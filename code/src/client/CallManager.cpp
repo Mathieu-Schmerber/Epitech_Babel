@@ -12,12 +12,12 @@
 #include "UdpQuery.hpp"
 
 const Contact CONTACT_NULL = Contact("", "", -1);
+const int PORT_OPT_1 = 4444;
+const int PORT_OPT_2 = 4343;
 
 CallManager::CallManager(Window *window, const Contact &me) : QWidget(window)
 {
-    this->_window = window;
     this->_section = window->getCallSection();
-    this->_socket = new QUdpSocket(this);
     this->_me = me;
     this->_inCall = CONTACT_NULL;
     this->_requestingCall = CONTACT_NULL;
@@ -25,16 +25,78 @@ CallManager::CallManager(Window *window, const Contact &me) : QWidget(window)
     this->_state = CallManager::NONE;
     this->_audio = nullptr;
     this->_opus = nullptr;
-    this->_socket->bind(QHostAddress(me.getIp().c_str()), me.getPort());
-    connect(_socket, SIGNAL(readyRead()), this, SLOT(onDataReceived()));
+    this->_receiver = nullptr;
+    this->_sender = nullptr;
+    this->_sThread = nullptr;
+    this->_rThread = nullptr;
+    this->setupQuerySocketing(window);
+}
+
+CallManager::~CallManager()
+{
+    if (this->_audio && this->_opus) {
+        delete this->_audio;
+        delete this->_opus;
+    }
+    this->_querySocket->close();
+    delete this->_querySocket;
+}
+
+void CallManager::setupQuerySocketing(Window *window)
+{
+    this->_querySocket = new QUdpSocket(this);
+    this->_querySocket->bind(QHostAddress(_me.getIp().c_str()), _me.getPort());
+    connect(_querySocket, SIGNAL(readyRead()), this, SLOT(onDataReceived()));
     connect(_section, SIGNAL(hangupEvt()), this, SLOT(sendStopCall()));
     connect(_section, SIGNAL(acceptEvt()), this, SLOT(sendConfirmCall()));
     connect(window->getContactList(), SIGNAL(startEvt(const Contact &)), this, SLOT(sendStartCall(const Contact &)));
 }
 
-CallManager::~CallManager()
+void CallManager::setupAudio()
 {
-    this->_socket->close();
+    this->_audio = new Audio();
+    this->_opus = new Opus(_audio->getSampleRate(),
+                           _audio->getBufferSize(),
+                           _audio->getChannelNb());
+}
+
+void CallManager::setupSoundSockets(int readOn, int sendOn)
+{
+    this->_sender = new UdpSoundIO(this,
+    Contact(_me.getIp(), _me.getName(), sendOn),
+    Contact(_inCall.getIp(), _inCall.getName(), sendOn));
+    this->_receiver = new UdpSoundIO(this,
+    Contact(_me.getIp(), _me.getName(), readOn),
+    Contact(_inCall.getIp(), _inCall.getName(), readOn));
+
+    this->_sThread = new QThread(this);
+    this->_sThread->start();
+    this->_sender->moveToThread(_sThread);
+    this->_rThread = new QThread(this);
+    this->_rThread->start();
+    this->_receiver->moveToThread(_rThread);
+    this->_sender->metaObject()->invokeMethod(this->_sender, "createSocket", Qt::QueuedConnection);
+    this->_sender->metaObject()->invokeMethod(this->_sender, "recordAndSend", Qt::QueuedConnection);
+    this->_receiver->metaObject()->invokeMethod(this->_receiver, "createSocket", Qt::QueuedConnection);
+    connect(this->_sender, SIGNAL(finished()), this->_sThread, SLOT(quit()), Qt::DirectConnection);
+    connect(this->_sender, SIGNAL(finished()), this->_sender, SLOT(deleteLater()), Qt::DirectConnection);
+    connect(this->_sender, SIGNAL(finished()), this->_rThread, SLOT(quit()), Qt::DirectConnection);
+    connect(this->_sender, SIGNAL(finished()), this->_receiver, SLOT(deleteLater()), Qt::DirectConnection);
+}
+
+IAudioStream* CallManager::getAudio() const
+{
+    return this->_audio;
+}
+
+IAudioEncoder* CallManager::getOpus() const
+{
+    return this->_opus;
+}
+
+CallManager::State CallManager::getState() const
+{
+    return this->_state;
 }
 
 //region "Sender"
@@ -45,11 +107,27 @@ void CallManager::sendStartCall(const Contact &contact)
     if (_state == NONE) {
         _state = WAITING_FOR_RESPONSE;
         _waitingForResponse = contact;
-    } else // TODO: show error box "Already in a call.";
+    }
+    else {
+        QMessageBox::warning(this, "Call", QString("You are already in a call."));
         return;
+    }
     data.append(UdpSerializeQuery(UdpQuery(UdpQuery::START_CALL, _me)).c_str());
-    this->_socket->writeDatagram(data, QHostAddress(contact.getIp().c_str()), contact.getPort());
+    this->_querySocket->writeDatagram(data, QHostAddress(contact.getIp().c_str()), contact.getPort());
     this->_section->setState(_state, contact);
+}
+
+void CallManager::sendConfirmCall()
+{
+    QByteArray data;
+
+    this->_inCall = this->_requestingCall;
+    this->_state = IN_CALL;
+    data.append(UdpSerializeQuery(UdpQuery(UdpQuery::CONFIRM_CALL, _me)).c_str());
+    this->_querySocket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
+    this->_section->setState(_state, _inCall);
+    this->setupAudio();
+    this->setupSoundSockets(PORT_OPT_1, PORT_OPT_2);
 }
 
 void CallManager::sendStopCall()
@@ -71,7 +149,7 @@ void CallManager::sendStopCall()
             return;
     }
     data.append(UdpSerializeQuery(UdpQuery(UdpQuery::STOP_CALL, _me)).c_str());
-    this->_socket->writeDatagram(data, QHostAddress(receiver.getIp().c_str()), receiver.getPort());
+    this->_querySocket->writeDatagram(data, QHostAddress(receiver.getIp().c_str()), receiver.getPort());
     this->_inCall = CONTACT_NULL;
     this->_requestingCall = CONTACT_NULL;
     this->_waitingForResponse = CONTACT_NULL;
@@ -79,18 +157,14 @@ void CallManager::sendStopCall()
     this->_section->setState(_state);
 }
 
-void CallManager::sendConfirmCall()
+void CallManager::sendCancelCall(const Contact& contact)
 {
     QByteArray data;
 
-    this->_inCall = this->_requestingCall;
-    this->_state = IN_CALL;
-    data.append(UdpSerializeQuery(UdpQuery(UdpQuery::CONFIRM_CALL, _me)).c_str());
-    this->_socket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
-    this->_section->setState(_state, _inCall);
-    this->setupAudio();
-    std::cout << "Setup audio on Confirm send" << std::endl;
+    data.append(UdpSerializeQuery(UdpQuery(UdpQuery::CANCEL_CALL, _me)).c_str());
+    this->_querySocket->writeDatagram(data, QHostAddress(contact.getIp().c_str()), contact.getPort());
 }
+
 //endregion
 
 //region "Receiver"
@@ -98,8 +172,12 @@ void CallManager::receiveStartCall(const Contact &sender)
 {
     QByteArray data;
 
-    if (_state == IN_CALL || _state == RECEIVING_CALL) // TODO: Send a Cancel query
+    if (_state != NONE) {
+        this->sendCancelCall(sender);
+        QMessageBox::critical(this, "Call", QString("%1 (%2:%3) tried to call you.")
+        .arg(sender.getName().c_str()).arg(sender.getIp().c_str()).arg(sender.getPort()));
         return;
+    }
     this->_state = RECEIVING_CALL;
     this->_requestingCall = sender;
     this->_section->setState(_state, this->_requestingCall);
@@ -111,8 +189,7 @@ void CallManager::receiveConfirmCall(const Contact &sender)
     this->_inCall = sender;
     this->_section->setState(_state, sender);
     this->setupAudio();
-    std::cout << "Setup audio on Confirm receive" << std::endl;
-    this->sendRecord();
+    this->setupSoundSockets(PORT_OPT_2, PORT_OPT_1);
 }
 
 void CallManager::receiveStopCall(const Contact &sender)
@@ -123,6 +200,19 @@ void CallManager::receiveStopCall(const Contact &sender)
     this->_state = NONE;
     this->_section->setState(_state);
 }
+
+void CallManager::receiveCancelCall(const Contact& sender)
+{
+    if (this->_state == CallManager::WAITING_FOR_RESPONSE && this->_waitingForResponse == sender) {
+        this->_inCall = CONTACT_NULL;
+        this->_requestingCall = CONTACT_NULL;
+        this->_waitingForResponse = CONTACT_NULL;
+        this->_state = NONE;
+        this->_section->setState(_state);
+        QMessageBox::critical(this, "Call", QString("%1 (%2:%3) is busy.")
+        .arg(sender.getName().c_str()).arg(sender.getIp().c_str()).arg(sender.getPort()));
+    }
+}
 //endregion
 
 void CallManager::handleQueries(const std::string &query)
@@ -131,20 +221,22 @@ void CallManager::handleQueries(const std::string &query)
 
     switch (data.getType()) {
         case UdpQuery::START_CALL:
-            std::cout << "receive START_CALL" << std::endl;
+            std::cout << "START_CALL from " << data.getSender().getIp() << ":" << data.getSender().getPort() << std::endl;
             this->receiveStartCall(data.getSender());
             break;
         case UdpQuery::CONFIRM_CALL:
-            std::cout << "receive CONFIRM_CALL" << std::endl;
+            std::cout << "CONFIRM_CALL from " << data.getSender().getIp() << ":" << data.getSender().getPort() << std::endl;
             this->receiveConfirmCall(data.getSender());
             break;
         case UdpQuery::STOP_CALL:
-            std::cout << "receive STOP_CALL" << std::endl;
+            std::cout << "STOP_CALL from " << data.getSender().getIp() << ":" << data.getSender().getPort() << std::endl;
             this->receiveStopCall(data.getSender());
             break;
-        case UdpQuery::SEND_AUDIO:
-            std::cout << "receive SEND_AUDIO" << std::endl;
-            this->receiveRecord(data.getData());
+        case UdpQuery::CANCEL_CALL:
+            std::cout << "CANCEL_CALL from " << data.getSender().getIp() << ":" << data.getSender().getPort() << std::endl;
+            this->receiveCancelCall(data.getSender());
+            break;
+        default:
             break;
     }
 }
@@ -155,43 +247,7 @@ void CallManager::onDataReceived()
     QHostAddress sender;
     quint16 senderPort;
 
-    buffer.resize(this->_socket->pendingDatagramSize());
-    _socket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
+    buffer.resize(this->_querySocket->pendingDatagramSize());
+    _querySocket->readDatagram(buffer.data(), buffer.size(), &sender, &senderPort);
     handleQueries(std::string(buffer.data()));
-}
-
-void CallManager::setupAudio()
-{
-    this->_audio = new Audio();
-    this->_opus = new Opus(_audio->getSampleRate(),
-                           _audio->getBufferSize(),
-                           _audio->getChannelNb());
-}
-
-void CallManager::sendShortRecord(const std::vector<uint16_t> &record)
-{
-    UdpQuery query(UdpQuery::SEND_AUDIO, _me);
-    QByteArray data;
-
-    query.setData(record);
-    data.append(UdpSerializeQuery(query).c_str());
-    this->_socket->writeDatagram(data, QHostAddress(_inCall.getIp().c_str()), _inCall.getPort());
-    std::cout << "Send audio to " << std::to_string(_inCall.getPort()) << std::endl;
-}
-
-void CallManager::sendRecord()
-{
-    std::vector<uint16_t> rec;
-    std::vector<uint16_t> sample;
-
-    while (this->_state == IN_CALL) {
-        rec = _audio->ReadStream();
-        sample = _opus->Encode(rec);
-        this->sendShortRecord(sample);
-    }
-}
-
-void CallManager::receiveRecord(const std::vector<uint16_t> &record)
-{
-    _audio->WriteStream(_opus->Decode(record));
 }

@@ -41,9 +41,9 @@ class Audio : public IAudioStream
         void CloseStream();
         void Terminate();
 
-        const uint32_t getSampleRate();
-        const uint32_t getBufferSize();
-        const uint32_t getChannelNb();
+        uint32_t getSampleRate() const override;
+        uint32_t getBufferSize() const override;
+        uint32_t getChannelNb() const override;
 };
 
 #endif

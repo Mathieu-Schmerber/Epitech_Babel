@@ -22,17 +22,20 @@ public:
         START_CALL = 0,
         CONFIRM_CALL = 1,
         STOP_CALL = 2,
-        SEND_AUDIO = 3
+        CANCEL_CALL = 3,
+        SEND_AUDIO = 4
     };
 private:
     Contact _sender;
     std::vector<uint16_t> _data;
     QueryType _type;
 public:
+    int _id; // TEMPORARY
+
     QueryType getType() const;
 
     UdpQuery(QueryType type = QueryType::SEND_AUDIO,
-             const Contact &sender = Contact("", "", -1));
+             const Contact &sender = Contact("", "", -1), int id = 0);
     ~UdpQuery();
 
     const std::vector<uint16_t> &getData() const;
@@ -44,7 +47,7 @@ public:
 
     template<class Archive>
     void serialize(Archive& ar, const unsigned int version){
-        ar & _sender & _data & _type;
+        ar & _sender & _data & _type & _id;
     }
 };
 

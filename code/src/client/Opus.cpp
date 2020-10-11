@@ -7,7 +7,7 @@
 
 #include "Opus.hpp"
 
-Opus::Opus(uint32_t sampleRate, uint32_t bufferSize, int channels)
+Opus::Opus(uint32_t sampleRate, uint32_t bufferSize, int channels) : IAudioEncoder()
 {
     _sampleRate = sampleRate;
     _bufferSize = bufferSize;

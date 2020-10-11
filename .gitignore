@@ -6,6 +6,7 @@ babel.db
 cmake-build-debug
 .idea
 .vs
+.vscode
 code/CMakeList.txt
 code/cmake-build-debug
 code/.idea

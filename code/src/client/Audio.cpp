@@ -1,7 +1,7 @@
 #include "Audio.hpp"
 #include "portaudio.h"
 
-Audio::Audio()
+Audio::Audio() : IAudioStream()
 {
     _sampleRate = 48000;
     _bufferSize = 480;
@@ -106,15 +106,15 @@ void Audio::Terminate()
     Pa_Terminate();
 }
 
-const uint32_t Audio::getSampleRate()
+uint32_t Audio::getSampleRate() const
 {
     return _sampleRate;
 }
-const uint32_t Audio::getBufferSize()
+uint32_t Audio::getBufferSize() const
 {
     return _bufferSize;
 }
-const uint32_t Audio::getChannelNb()
+uint32_t Audio::getChannelNb() const
 {
     return _channelNb;
 }

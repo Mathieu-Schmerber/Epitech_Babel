@@ -17,6 +17,9 @@ class IAudioStream {
         virtual std::vector<uint16_t> ReadStream() = 0;
         virtual void WriteStream(std::vector<uint16_t> sample) = 0;
 
+        virtual uint32_t getSampleRate() const = 0;
+        virtual uint32_t getBufferSize() const = 0;
+        virtual uint32_t getChannelNb() const = 0;
 };
 
 #endif /* !IAUDIOSTREAM_HPP_ */

@@ -9,6 +9,7 @@
 #include "QtNetworkForm.hpp"
 #include "Error.hpp"
 #include "QtStyle.hpp"
+#include <QtWidgets\qmessagebox.h>
 
 QtNetworkForm::QtNetworkForm(const std::string &title) : QDialog()
 {
@@ -118,6 +119,10 @@ void QtNetworkForm::saveForm()
         this->_myName = this->_myNameEdit->text().toUtf8().constData();
     } catch (std::exception &e) {
         throw ServerError("Wrong arguments");
+    }
+    if (_myPort == 4343 || _myPort == 4444) {
+        QMessageBox::critical(this, "Connection refused", QString("Your port must be different from 4343 and 4444."));
+        return;
     }
     emit accept();
 }

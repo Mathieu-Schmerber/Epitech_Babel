@@ -7,8 +7,8 @@
 
 #include "UdpQuery.hpp"
 
-UdpQuery::UdpQuery(QueryType type, const Contact &sender)
-: _type(type), _sender(sender) {}
+UdpQuery::UdpQuery(QueryType type, const Contact &sender, int id)
+: _type(type), _sender(sender), _id(id) {}
 
 UdpQuery::~UdpQuery() {}
 

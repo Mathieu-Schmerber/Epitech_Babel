@@ -14,6 +14,9 @@
 #include <QtWidgets/QtWidgets>
 #include "Contact.hpp"
 
+/**
+ * @brief Handles TCP socketing between the client and the server.
+*/
 class Database : public QWidget
 {
 Q_OBJECT

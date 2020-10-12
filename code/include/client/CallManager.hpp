@@ -19,11 +19,18 @@ class Window;
 
 class QtCallSection;
 
+/**
+ * @brief 
+ * Handles calls based on UDP socketing and threading.
+*/
 class CallManager : public QWidget
 {
 Q_OBJECT
 public:
-    enum State { // TODO: actions depending on states
+    /**
+     * @brief Defines the clients calling state.
+    */
+    enum State {
         NONE,
         WAITING_FOR_RESPONSE,
         RECEIVING_CALL,
@@ -33,8 +40,8 @@ public:
     CallManager(Window *window, const Contact &me);
     ~CallManager();
 
-    IAudioStream* getAudio() const;
-    IAudioEncoder* getOpus() const;
+    IAudioStream* getAudioStream() const;
+    IAudioEncoder* getAudioEncoder() const;
     State getState() const;
 
 private:

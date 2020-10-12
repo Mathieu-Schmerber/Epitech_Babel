@@ -16,6 +16,9 @@
 
 class Contact;
 
+/**
+ * @brief Displays all users connected to the server.
+*/
 class QtContactList : public QWidget
 {
 Q_OBJECT

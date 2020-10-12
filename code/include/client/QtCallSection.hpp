@@ -14,6 +14,9 @@
 #include "Contact.hpp"
 #include "CallManager.hpp"
 
+/**
+ * @brief The graphical interface representing the CallManager's state.
+*/
 class QtCallSection : public QWidget
 {
     Q_OBJECT

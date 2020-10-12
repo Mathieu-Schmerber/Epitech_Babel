@@ -16,6 +16,9 @@
 #include "QtCallSection.hpp"
 #include "CallManager.hpp"
 
+/**
+ * @brief The client's main Window
+*/
 class Window : public QWidget
 {
 private:
@@ -38,11 +41,6 @@ public:
     QtCallSection *getCallSection() const;
 
     void display();
-
-    void setCallHangupEvent(void (CallManager::*callHangupEvent)());
-    void setCallDeclinedEvent(void (CallManager::*callDeclinedEvent)());
-    void setCallAcceptedEvent(void (CallManager::*callAcceptedEvent)());
-    void setCallStartEvent(void (CallManager::*callStartEvent)());
 };
 
 #endif

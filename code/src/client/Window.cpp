@@ -29,6 +29,9 @@ Window::~Window()
     delete this->_callSection;
 }
 
+/**
+ * @brief Shows the Window after initializing the QtCallSection and the QtContactList.
+*/
 void Window::display()
 {
     this->_contactList->display();
@@ -44,24 +47,4 @@ QtContactList *Window::getContactList() const
 QtCallSection * Window::getCallSection() const
 {
     return this->_callSection;
-}
-
-void Window::setCallHangupEvent(void (CallManager::*callHangupEvent)())
-{
-    _callHangupEvent = callHangupEvent;
-}
-
-void Window::setCallDeclinedEvent(void (CallManager::*callDeclinedEvent)())
-{
-    _callDeclinedEvent = callDeclinedEvent;
-}
-
-void Window::setCallAcceptedEvent(void (CallManager::*callAcceptedEvent)())
-{
-    _callAcceptedEvent = callAcceptedEvent;
-}
-
-void Window::setCallStartEvent(void (CallManager::*callStartEvent)())
-{
-    _callStartEvent = callStartEvent;
 }

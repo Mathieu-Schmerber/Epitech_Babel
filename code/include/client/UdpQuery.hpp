@@ -15,9 +15,15 @@
 #include <vector>
 #include "Contact.hpp"
 
+/**
+ * @brief Represents a query that will be serialize then send through UDP sockets.
+*/
 class UdpQuery
 {
 public:
+    /**
+     * @brief The type of the query.
+    */
     enum QueryType {
         START_CALL = 0,
         CONFIRM_CALL = 1,

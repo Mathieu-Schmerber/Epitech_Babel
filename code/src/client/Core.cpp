@@ -26,6 +26,9 @@ Core::~Core()
     delete this->_app;
 }
 
+/**
+ * @brief Initializes everything, like the Window, the Database, the CallManager and handles the QtNetworkForm.
+*/
 void Core::initialize()
 {
     std::vector<Contact> contactList;

@@ -27,6 +27,10 @@ Database::~Database()
     }
 }
 
+/**
+ * @brief Connects the client to the server.
+ * @param me The client to connect as a Contact.
+*/
 void Database::connect(const Contact& me)
 {
     QString errorMsg;
@@ -46,6 +50,10 @@ void Database::connect(const Contact& me)
     }
 }
 
+/**
+ * @brief Disconnects the client from the server.
+ * @param me The client to disconnect as a Contact.
+*/
 void Database::disconnect(const Contact& me)
 {
     TcpQuery query(TcpQuery::QueryType::DISCONNECT);
@@ -58,6 +66,9 @@ void Database::disconnect(const Contact& me)
     }
 }
 
+/**
+ * @brief Called when there is new data to read on the TCP socket.
+*/
 void Database::onDataReceived()
 {
     TcpQuery query(TcpQuery::QueryType::CLIENT_LIST);
@@ -82,11 +93,17 @@ void Database::onDataReceived()
     }
 }
 
+/**
+ * @brief Called when the server refuses the client's connection.
+*/
 void Database::onConnectionRefused()
 {
     QMessageBox::critical(this, "Connection refused.", QString("Someone with the same IP and PORT is already connected."));
 }
 
+/**
+ * @brief Called when the server closes.
+*/
 void Database::onServerClosed()
 {
     _socket->deleteLater();

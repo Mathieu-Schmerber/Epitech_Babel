@@ -13,9 +13,15 @@
 #include <vector>
 #include "Contact.hpp"
 
+/**
+ * @brief Represents a query that will be serialize then send through TCP sockets.
+*/
 class TcpQuery
 {
     public:
+        /**
+         * @brief The type of the query.
+        */
         enum QueryType {
             CONNECT = 0,
             CLIENT_LIST = 1,

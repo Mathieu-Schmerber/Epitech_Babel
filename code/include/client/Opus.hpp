@@ -18,6 +18,9 @@
 #define FRAMES_PER_BUFFER (1024)
 #define SAMPLE_RATE (48000)
 
+/**
+ * @brief Opus library encapsulation.
+*/
 class Opus : public IAudioEncoder
 {
     private:

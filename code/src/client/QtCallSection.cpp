@@ -102,6 +102,11 @@ void QtCallSection::inCallState(const Contact &contact)
     connect(_hangupBtn, SIGNAL(clicked()), this, SLOT(hangup()));
 }
 
+/**
+ * @brief Setting the graphical state, depending on the CallManager's state
+ * @param state The CallManager::State to display
+ * @param contact The Contact related to the state (eg. When calling a contact, displaying the contact informations)
+*/
 void QtCallSection::setState(CallManager::State state, const Contact &contact)
 {
     this->_hangupBtn->setEnabled(true);
@@ -126,6 +131,9 @@ void QtCallSection::setState(CallManager::State state, const Contact &contact)
     }
 }
 
+/**
+ * @brief Displaying the QtCallSection on the main Window.
+*/
 void QtCallSection::display()
 {
     this->_infoTxt->resize(this->width(), int(this->height() * 0.2));
@@ -136,13 +144,17 @@ void QtCallSection::display()
     this->show();
 }
 
-/*  SLOTS & SIGNALS  */
-
+/**
+ * @brief Signal emited when the hangup button is pressed.
+*/
 void QtCallSection::hangup()
 {
     emit hangupEvt();
 }
 
+/**
+ * @brief Signal emited when the accept button is pressed.
+*/
 void QtCallSection::accept()
 {
     emit acceptEvt();

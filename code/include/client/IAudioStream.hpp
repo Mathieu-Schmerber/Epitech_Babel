@@ -11,6 +11,9 @@
 #include <vector>
 #include <iostream>
 
+/**
+ * @brief Interface representing audio streaming libraries.
+*/
 class IAudioStream {
     public:
         ~IAudioStream() = default;

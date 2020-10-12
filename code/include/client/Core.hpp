@@ -13,6 +13,9 @@
 #include "CallManager.hpp"
 #include "QtNetworkForm.hpp"
 
+/**
+ * @brief This is the core of the Babel's client
+*/
 class Core
 {
 	private:

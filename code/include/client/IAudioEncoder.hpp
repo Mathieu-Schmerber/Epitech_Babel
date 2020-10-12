@@ -11,6 +11,9 @@
 #include <vector>
 #include <iostream>
 
+/**
+ * @brief Interface representing audio encoding libraries.
+*/
 class IAudioEncoder {
     public:
         ~IAudioEncoder() = default;

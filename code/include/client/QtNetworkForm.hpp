@@ -16,6 +16,9 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QDialog>
 
+/**
+ * @brief A window used to collect server's and client's informations before connection.
+*/
 class QtNetworkForm : public QDialog
 {
     Q_OBJECT

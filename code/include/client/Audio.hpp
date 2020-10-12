@@ -18,6 +18,9 @@
 #include "Opus.hpp"
 #include "IAudioStream.hpp"
 
+/**
+ * @brief PortAudio library encapsulation.
+*/
 class Audio : public IAudioStream
 {
     private:

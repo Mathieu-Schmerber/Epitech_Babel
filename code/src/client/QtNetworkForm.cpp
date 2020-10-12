@@ -78,6 +78,10 @@ void QtNetworkForm::applyStyle()
     this->setStyleSheet("background: #3e4349;");
 }
 
+/**
+ * @brief Gets the world wild IPv4 of the client.
+ * @return The clients IPv4
+*/
 QString QtNetworkForm::getIPV4() const
 {
     QList<QHostAddress> list = QHostInfo::fromName(QHostInfo::localHostName()).addresses();
@@ -90,26 +94,41 @@ QString QtNetworkForm::getIPV4() const
     return QString("127.0.0.1");
 }
 
+/**
+ * @brief Gets the referenced server IP.
+*/
 const std::string &QtNetworkForm::getSrvIp() const
 {
     return _srvIp;
 }
 
+/**
+ * @brief Gets the referenced server port.
+*/
 int QtNetworkForm::getSrvPort() const
 {
     return _srvPort;
 }
 
+/**
+ * @brief Gets the referenced client's port.
+*/
 int QtNetworkForm::getMyPort() const
 {
     return _myPort;
 }
 
+/**
+ * @brief Gets the referenced client's username.
+*/
 const std::string & QtNetworkForm::getMyName() const
 {
     return _myName;
 }
 
+/**
+ * @brief Save the QtNetworkForm so each referenced value is gettable.
+*/
 void QtNetworkForm::saveForm()
 {
     try {

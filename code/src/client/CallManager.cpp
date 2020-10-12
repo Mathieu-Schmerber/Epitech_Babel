@@ -52,12 +52,17 @@ void CallManager::setupQuerySocketing(Window *window)
     connect(window->getContactList(), SIGNAL(startEvt(const Contact &)), this, SLOT(sendStartCall(const Contact &)));
 }
 
+/**
+ * @brief Initializes the audio resources (IAudioStream, IAudioEncoder)
+*/
 void CallManager::setupAudio()
 {
-    this->_audio = new Audio();
-    this->_opus = new Opus(_audio->getSampleRate(),
-                           _audio->getBufferSize(),
-                           _audio->getChannelNb());
+    if (this->_audio == nullptr)
+        this->_audio = new Audio();
+    if (this->_opus == nullptr)
+        this->_opus = new Opus(_audio->getSampleRate(),
+                               _audio->getBufferSize(),
+                               _audio->getChannelNb());
 }
 
 void CallManager::setupSoundSockets(int readOn, int sendOn)
@@ -84,22 +89,34 @@ void CallManager::setupSoundSockets(int readOn, int sendOn)
     connect(this->_sender, SIGNAL(finished()), this->_receiver, SLOT(deleteLater()), Qt::DirectConnection);
 }
 
-IAudioStream* CallManager::getAudio() const
+/**
+ * @brief Gets the audio stream.
+*/
+IAudioStream* CallManager::getAudioStream() const
 {
     return this->_audio;
 }
 
-IAudioEncoder* CallManager::getOpus() const
+/**
+ * @brief Gets the audio encoder.
+*/
+IAudioEncoder* CallManager::getAudioEncoder() const
 {
     return this->_opus;
 }
 
+/**
+ * @brief Gets the CallManager's current state. 
+*/
 CallManager::State CallManager::getState() const
 {
     return this->_state;
 }
 
-//region "Sender"
+/**
+ * @brief Sends a "start" query.
+ * @param contact The destination of the query
+*/
 void CallManager::sendStartCall(const Contact &contact)
 {
     QByteArray data;
@@ -115,6 +132,9 @@ void CallManager::sendStartCall(const Contact &contact)
         QMessageBox::warning(this, "Call", QString("You are already in a call."));
 }
 
+/**
+ * @brief Sends a "confirm" query.
+*/
 void CallManager::sendConfirmCall()
 {
     QByteArray data;
@@ -128,6 +148,9 @@ void CallManager::sendConfirmCall()
     this->setupSoundSockets(PORT_OPT_1, PORT_OPT_2);
 }
 
+/**
+ * @brief Stops the call.
+*/
 void CallManager::sendStopCall()
 {
     QByteArray data;
@@ -155,6 +178,10 @@ void CallManager::sendStopCall()
     this->_section->setState(_state);
 }
 
+/**
+ * @brief Sends a "cancel" query.
+ * @param contact The destination of the query
+*/
 void CallManager::sendCancelCall(const Contact& contact)
 {
     QByteArray data;
@@ -163,9 +190,10 @@ void CallManager::sendCancelCall(const Contact& contact)
     this->_querySocket->writeDatagram(data, QHostAddress(contact.getIp().c_str()), contact.getPort());
 }
 
-//endregion
-
-//region "Receiver"
+/**
+ * @brief Handles the reception of a "start" query.
+ * @param sender The sender of the query
+*/
 void CallManager::receiveStartCall(const Contact &sender)
 {
     QByteArray data;
@@ -181,6 +209,10 @@ void CallManager::receiveStartCall(const Contact &sender)
     this->_section->setState(_state, this->_requestingCall);
 }
 
+/**
+ * @brief Handles the reception of a "confirm" query.
+ * @param sender The sender of the query
+*/
 void CallManager::receiveConfirmCall(const Contact &sender)
 {
     this->_state = IN_CALL;
@@ -190,6 +222,10 @@ void CallManager::receiveConfirmCall(const Contact &sender)
     this->setupSoundSockets(PORT_OPT_2, PORT_OPT_1);
 }
 
+/**
+ * @brief Handles the reception of a "stop" query.
+ * @param sender The sender of the query
+*/
 void CallManager::receiveStopCall(const Contact &sender)
 {
     this->_inCall = CONTACT_NULL;
@@ -199,6 +235,10 @@ void CallManager::receiveStopCall(const Contact &sender)
     this->_section->setState(_state);
 }
 
+/**
+ * @brief Handles the reception of a "cancel" query.
+ * @param sender The sender of the query
+*/
 void CallManager::receiveCancelCall(const Contact& sender)
 {
     if (this->_state == CallManager::WAITING_FOR_RESPONSE && this->_waitingForResponse == sender) {
@@ -211,8 +251,11 @@ void CallManager::receiveCancelCall(const Contact& sender)
         .arg(sender.getName().c_str()).arg(sender.getIp().c_str()).arg(sender.getPort()));
     }
 }
-//endregion
 
+/**
+ * @brief Handles the reception of every queries and redirects them to specific member functions.
+ * @param query The query received as a std::string
+*/
 void CallManager::handleQueries(const std::string &query)
 {
     UdpQuery data = UdpDeserializeQuery(query);
@@ -239,6 +282,9 @@ void CallManager::handleQueries(const std::string &query)
     }
 }
 
+/**
+ * @brief Called when the socket has data ro read.
+*/
 void CallManager::onDataReceived()
 {
     QByteArray buffer;

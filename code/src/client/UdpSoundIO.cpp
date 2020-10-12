@@ -15,8 +15,8 @@ UdpSoundIO::UdpSoundIO(CallManager *parent, const Contact &settings, const Conta
     this->_socket = nullptr;
     this->_destination = destination;
     this->_settings = settings;
-    this->_audio = parent->getAudio();
-    this->_opus = parent->getOpus();
+    this->_audio = parent->getAudioStream();
+    this->_opus = parent->getAudioEncoder();
     this->_parent = parent;
 }
 
@@ -25,6 +25,9 @@ UdpSoundIO::~UdpSoundIO()
     delete this->_socket;
 }
 
+/**
+ * @brief Initializes the UDP socket.
+*/
 void UdpSoundIO::createSocket()
 {
     this->_socket = new QUdpSocket(this);
@@ -32,6 +35,10 @@ void UdpSoundIO::createSocket()
     connect(_socket, SIGNAL(readyRead()), this, SLOT(onDataReceived()));
 }
 
+/**
+ * @brief Sends encoded audio data through the UDP socket.
+ * @param record The encoded audio data
+*/
 void UdpSoundIO::sendPacket(const std::vector<uint16_t> &record)
 {
     UdpQuery query(UdpQuery::SEND_AUDIO, this->_settings);
@@ -42,6 +49,10 @@ void UdpSoundIO::sendPacket(const std::vector<uint16_t> &record)
     _socket->writeDatagram(data, QHostAddress(_destination.getIp().c_str()), _destination.getPort());
 }
 
+/**
+ * @brief Records audio thanks to an IAudioStream, encode it with the IAudioEncoder and 
+ sends the encoded data through UDP.
+*/
 void UdpSoundIO::recordAndSend()
 {
     std::vector<uint16_t> rec;
@@ -56,6 +67,10 @@ void UdpSoundIO::recordAndSend()
     emit finished();
 }
 
+/**
+ * @brief Deserialize queries and handles them.
+ * @param query The query that has been received on the socket
+*/
 void UdpSoundIO::parseAndReadQuery(const std::string &query)
 {
     UdpQuery parsed = UdpDeserializeQuery(query);
@@ -64,6 +79,9 @@ void UdpSoundIO::parseAndReadQuery(const std::string &query)
         _audio->WriteStream(_opus->Decode(parsed.getData()));
 }
 
+/**
+ * @brief Called when there's data to read on the socket.
+*/
 void UdpSoundIO::onDataReceived()
 {
     QByteArray buffer;

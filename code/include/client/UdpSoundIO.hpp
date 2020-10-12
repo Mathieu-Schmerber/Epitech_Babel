@@ -16,6 +16,9 @@
 
 class CallManager;
 
+/**
+ * @brief Handles an UDP socket that will send or receive audio data.
+*/
 class UdpSoundIO : public QObject {
 Q_OBJECT
 private:

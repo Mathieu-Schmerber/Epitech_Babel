@@ -13,6 +13,9 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/serialization/vector.hpp>
 
+/**
+ * @brief Represents an user with an ip, a name, and a receiving port.
+*/
 class Contact
 {
 	private:

@@ -51,6 +51,9 @@ void QtContactList::addContactButton(const std::string &name, size_t index)
     connect(btn, SIGNAL( clicked() ), this->_mapper, SLOT(map()));
 }
 
+/**
+ * @brief Displays the QtContactList on the main Window.
+*/
 void QtContactList::display()
 {
     this->show();
@@ -76,6 +79,10 @@ void QtContactList::purgeContactList()
     this->_buttons.clear();
 }
 
+/**
+ * @brief Sets the list of Contact the client can call.
+ * @param list A std::vector of Contact that will be displayed as buttons.
+*/
 void QtContactList::pushContacts(const std::vector<Contact> &list)
 {
     this->purgeContactList();

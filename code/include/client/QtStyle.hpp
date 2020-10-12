@@ -10,6 +10,9 @@
 
 #include <string>
 
+/**
+ * @brief A namespace containing the interface styles.
+*/
 namespace QtStyle {
 
     const QString inputStyle = QString(

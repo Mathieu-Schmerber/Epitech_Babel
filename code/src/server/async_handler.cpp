@@ -34,22 +34,28 @@ async_handler::async_handler(boost::asio::io_context& io_context, SQLdatabase *d
 
  void async_handler::loginUser(const Contact &user)
  {
-     std::string sql = "INSERT INTO CONTACT (IP,PORT,NAME) VALUES (";
-     
-     this->buffer = _db->getContactQuery();
-     sql += "'" + user.getIp() + "'" + ','
-         + "'" + std::to_string(user.getPort()) + "'" + ','
-         + "'" + user.getName() + "'" + ");";
-     _db->rc = sqlite3_exec(_db->db, sql.c_str(), SQLdatabase::callback, 0, &_db->error);
-     if (_db->rc != SQLITE_OK)
-         std::cerr << "SQL error: " << _db->error << std::endl;
-     sqlite3_free(_db->error);
-     _socket.async_write_some(
-         boost::asio::buffer(this->buffer),
-         boost::bind(&async_handler::handle_write,
-             shared_from_this(),
-             boost::asio::placeholders::error,
-             boost::asio::placeholders::bytes_transferred));
+     if (_db->checkIpPort(user) == 0) {
+        std::string sql = "INSERT INTO CONTACT (IP,PORT,NAME) VALUES (";
+        
+        this->buffer = _db->getContactQuery();
+        sql += "'" + user.getIp() + "'" + ','
+            + "'" + std::to_string(user.getPort()) + "'" + ','
+            + "'" + user.getName() + "'" + ");";
+        _db->rc = sqlite3_exec(_db->db, sql.c_str(), SQLdatabase::callback, 0, &_db->error);
+        if (_db->rc != SQLITE_OK)
+            std::cerr << "SQL error: " << _db->error << std::endl;
+        sqlite3_free(_db->error);
+     } else {
+         TcpQuery query(TcpQuery::DENIED);
+         std::string serialised(TcpSerializeQuery(query));
+         this->buffer = serialised;
+     }
+    _socket.async_write_some(
+            boost::asio::buffer(this->buffer),
+            boost::bind(&async_handler::handle_write,
+            shared_from_this(),
+            boost::asio::placeholders::error,
+            boost::asio::placeholders::bytes_transferred));   
  }
 
  void async_handler::logoutUser(const Contact &user)

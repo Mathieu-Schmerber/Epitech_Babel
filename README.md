@@ -1,3 +1,4 @@
+
 ## Installation
 
 This project uses **conan**.
@@ -36,6 +37,41 @@ You can start by running the server
 And then run the clients
 >$ ./build/bin/babel_client
 
-## Babel resources
-[Babel client diagram](https://github.com/EpitechIT2020/B-CPP-500-LIL-5-1-babel-thomas.crombez/blob/master/doc/babel_UML.pdf)
+## TCP protocol
+The project is using serialized information for communication between clients and server. The class we serialize is called **TcpQuery**. Therefore the protocol is defined by the different **QueryTypes** used, which are listed below:
 
+### Server to Client:
+ - (1) **CLIENT_LIST** => The server is sending the database content to the
+   client right after the client is successfully connected    (Answer   
+   to QueryType 0 **CONNECT**)
+  - (3) **DENIED** => The client tries to connect to the server with an IP and a port actually used by another client (Answer to QueryType    0    **CONNECT**)
+ ### Client to Server:
+  - (0) **CONNECT** => The client try to connect to the server
+  - (2) **DISCONNECTED** => The client notify the server that he is disconnecting so he can be removed from database
+
+
+
+
+## UDP protocol
+As for the TCP protocol, the communication between clients is done using serialized informations, we are serializing the **UdpQuery** class, the UDP QueryTypes are listed below:
+
+- **START_CALL** => Requests call start.
+- **CONFIRM_CALL** => Confirms a **START_CALL** request.
+- **CANCEL_CALL** => Cancels a **START_CALL** request.
+- **STOP_CALL** => Stops the current call.
+- **SEND_AUDIO** => Indicates that an audio package is stored in the **UdpQuery** object.
+
+### Ports usages:
+Ports for simple UDP socketing (call queries):
+- Choosed by the user when launching the client
+
+Ports used by UDP socketing to send and receive sound packets:
+- 4444
+- 4343
+
+**Thoose ports MUST be available for the Babel to run correctly**
+
+## Babel resources
+[Babel client UML class diagram](https://github.com/EpitechIT2020/B-CPP-500-LIL-5-1-babel-thomas.crombez/blob/master/documentation/UML.png)
+
+[Babel UDP Representation](https://github.com/EpitechIT2020/B-CPP-500-LIL-5-1-babel-thomas.crombez/blob/master/documentation/UDP.PNG)

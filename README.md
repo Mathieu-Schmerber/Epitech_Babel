@@ -37,11 +37,6 @@ You can start by running the server
 And then run the clients
 >$ ./build/bin/babel_client
 
-## Babel resources
-[Babel client UML class diagram](https://github.com/EpitechIT2020/B-CPP-500-LIL-5-1-babel-thomas.crombez/blob/master/documentation/UML.png)
-
-[Babel UDP Representation](https://github.com/EpitechIT2020/B-CPP-500-LIL-5-1-babel-thomas.crombez/blob/master/documentation/UDP.PNG)
-
 ## TCP protocol
 The project is using serialized information for communication between clients and server. The class we serialize is called **TcpQuery**. Therefore the protocol is defined by the different **QueryTypes** used, which are listed below:
 
@@ -72,3 +67,8 @@ Ports used by UDP socketing to send and receive sound packets:
 - 4343
 
 **Thoose ports MUST be available for the Babel to run correctly**
+
+## Babel resources
+[Babel client UML class diagram](https://github.com/EpitechIT2020/B-CPP-500-LIL-5-1-babel-thomas.crombez/blob/master/documentation/UML.png)
+
+[Babel UDP Representation](https://github.com/EpitechIT2020/B-CPP-500-LIL-5-1-babel-thomas.crombez/blob/master/documentation/UDP.PNG)

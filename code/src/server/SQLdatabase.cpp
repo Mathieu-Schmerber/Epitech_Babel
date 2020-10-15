@@ -7,7 +7,6 @@
 
 #include "TcpQuery.hpp"
 #include "SQLdatabase.hpp"
-#include "Contact.hpp"
 
 SQLdatabase::SQLdatabase()
 {
@@ -40,6 +39,24 @@ int SQLdatabase::callback(void *not_used, int ac, char **av, char **azColName)
 {
     return(0);
 }
+
+
+int SQLdatabase::checkIpPort(const Contact &user)
+{
+    std::ostringstream querry;
+    std::vector<Contact> contacts;
+     
+     querry << "SELECT * FROM CONTACT WHERE IP='" << user.getIp() << "' AND PORT='" << user.getPort() << "'";
+     rc = sqlite3_exec(db,querry.str().c_str(), SQLdatabase::getContactList, static_cast<void *>(&contacts), &error);
+     if (rc != SQLITE_OK)
+         std::cerr << "SQL error: " << error << std::endl;
+     sqlite3_free(error);
+     if (contacts.size() > 0) {
+        return (1);
+     }
+    return (0);
+}
+
 
 int SQLdatabase::getContactList(void *data, int ac, char **av, char **azColName)
 {

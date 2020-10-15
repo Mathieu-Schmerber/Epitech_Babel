@@ -13,6 +13,7 @@
 #include <boost/enable_shared_from_this.hpp>
 #include <sqlite3.h>
 #include <iostream>
+#include "Contact.hpp"
 
 class SQLdatabase : public boost::enable_shared_from_this<SQLdatabase>
 {
@@ -20,12 +21,14 @@ class SQLdatabase : public boost::enable_shared_from_this<SQLdatabase>
         SQLdatabase();
         static boost::shared_ptr<SQLdatabase> create();
         std::string getContactQuery();
+        int checkIpPort(const Contact &user);
         ~SQLdatabase();
         sqlite3 *db;
         int rc;
         char *error;
         static int callback(void *not_used, int ac, char **av, char **azColName);
         static int getContactList(void *not_used, int ac, char **av, char **azColName);
+        static int checkIpPortQuery(void *not_used, int ac, char **av, char **azColName);
     private:
         //sqlite3 *db;
         //int rc;

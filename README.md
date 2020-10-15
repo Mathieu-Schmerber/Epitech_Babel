@@ -37,6 +37,6 @@ And then run the clients
 >$ ./build/bin/babel_client
 
 ## Babel resources
-[Babel client diagram](https://github.com/EpitechIT2020/B-CPP-500-LIL-5-1-babel-thomas.crombez/blob/master/doc/babel_UML.pdf)
-[Babel UDP Representation](https://github.com/EpitechIT2020/B-CPP-500-LIL-5-1-babel-thomas.crombez/blob/master/doc/UDP.png)
+[Babel client diagram](https://github.com/EpitechIT2020/B-CPP-500-LIL-5-1-babel-thomas.crombez/blob/master/documentation/babel_UML.pdf)
+[Babel UDP Representation](https://github.com/EpitechIT2020/B-CPP-500-LIL-5-1-babel-thomas.crombez/blob/master/documentation/UDP.png)
 

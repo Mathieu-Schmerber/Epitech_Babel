@@ -33,6 +33,8 @@ void Opus::InitEncoder()
     _encoder = opus_encoder_create(_sampleRate, _channels, OPUS_APPLICATION_VOIP, &_error);
     if (_error != OPUS_OK) {
         std::cout << "opus_encoder_create failed: " << _error << "\n";
+    } else {
+        opus_encoder_ctl(_encoder, OPUS_GET_BANDWIDTH(&_rate));
     }
 }
 
@@ -46,17 +48,17 @@ void Opus::InitDecoder()
 
 std::vector<uint16_t> Opus::Encode(std::vector<uint16_t> data)
 {
-    std::vector<uint16_t> encodedData(data.size());
+    std::vector<uint16_t> encodedData(_rate);
 
-    opus_encode(_encoder, reinterpret_cast<opus_int16 const*>(data.data()), data.size(), reinterpret_cast<unsigned char *>(encodedData.data()), data.size());
+    opus_encode(_encoder, reinterpret_cast<opus_int16 const*>(data.data()), data.size(), reinterpret_cast<unsigned char *>(encodedData.data()), FRAMES_PER_BUFFER);
     return (encodedData);
 }
 
 std::vector<uint16_t> Opus::Decode(std::vector<uint16_t> encodedData)
 {
-    std::vector<uint16_t> decodedData(encodedData.size());
+    std::vector<uint16_t> decodedData(FRAMES_PER_BUFFER);
 
-    opus_decode(_decoder, reinterpret_cast<unsigned char *>(encodedData.data()), encodedData.size(), reinterpret_cast<opus_int16 *>(decodedData.data()), encodedData.size(), 0);
+    opus_decode(_decoder, reinterpret_cast<unsigned char *>(encodedData.data()), _rate, reinterpret_cast<opus_int16 *>(decodedData.data()), encodedData.size(), 0);
     return (decodedData);
 }
 

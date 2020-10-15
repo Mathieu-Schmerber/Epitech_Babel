@@ -15,7 +15,7 @@
 #include "IAudioEncoder.hpp"
 
 #define CHANNELS (2)
-#define FRAMES_PER_BUFFER (1024)
+#define FRAMES_PER_BUFFER (480)
 #define SAMPLE_RATE (48000)
 
 /**
@@ -30,6 +30,7 @@ class Opus : public IAudioEncoder
         uint32_t _sampleRate;
         uint32_t _bufferSize;
         int _channels;
+        opus_int32 _rate;
 
         void Error(std::string errorMessage);
         void Error();

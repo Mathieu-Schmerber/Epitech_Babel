@@ -49,6 +49,9 @@ The project is using serialized information for communication between clients an
   - (0) **CONNECT** => The client try to connect to the server
   - (2) **DISCONNECTED** => The client notify the server that he is disconnecting so he can be removed from database
 
+
+
+
 ## UDP protocol
 As for the TCP protocol, the communication between clients is done using serialized informations, we are serializing the **UdpQuery** class, the UDP QueryTypes are listed below:
 
